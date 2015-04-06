@@ -33,7 +33,7 @@ public class HumanPlayer : AbstractPlayer
 		
 		// Handle movement
 		Vector3 direction = Vector3.zero;
-		direction.y = Input.GetAxis ("Vertical") * Time.deltaTime;
+		direction.x = Input.GetAxis ("Vertical") * Time.deltaTime;
 
 		
 		Move(direction,rot);
