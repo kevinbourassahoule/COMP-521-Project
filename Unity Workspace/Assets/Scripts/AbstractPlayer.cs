@@ -7,7 +7,8 @@ public abstract class AbstractPlayer : MonoBehaviour
 	public float MAX_HEALTH;
 	public float Speed;
 	public float rotSpeed;
-	
+	public Transform walls;
+
 	protected int magazine;
 	protected float health;
 	

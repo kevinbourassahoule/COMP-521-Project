@@ -37,6 +37,7 @@ public class HumanPlayer : AbstractPlayer
 
 		
 		Move(direction,rot);
+		VisibilityPolygon visPoly = new VisibilityPolygon (transform.position, walls);
 	}
 	
 	override protected void Move(Vector3 direction, Quaternion rot)
