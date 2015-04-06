@@ -3,15 +3,20 @@ using System.Collections;
 
 public class HumanPlayer : AbstractPlayer
 {
+
 	// Use this for initialization
 	void Start () {
-	
+		Speed = 1f;
+		rotSpeed = 180f;
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
 		// Handle orientation
+		Quaternion rot = Quaternion.Euler (0.0f,0.0f,transform.rotation.eulerAngles.z - Input.GetAxis ("Horizontal") * rotSpeed * Time.deltaTime);
+		transform.rotation = rot;
+		//dont know if we still need this
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
 		
@@ -28,29 +33,14 @@ public class HumanPlayer : AbstractPlayer
 		
 		// Handle movement
 		Vector3 direction = Vector3.zero;
+		direction.y = Input.GetAxis ("Verical") * Time.deltaTime;
+
 		
-		if (Input.GetKeyDown(KeyCode.W))
-		{
-			direction += Vector3.up;
-		}
-		if (Input.GetKeyDown(KeyCode.A))
-		{
-			direction += Vector3.left;
-		}
-		if (Input.GetKeyDown(KeyCode.S))
-		{
-			direction += Vector3.down;
-		}
-		if (Input.GetKeyDown(KeyCode.D))
-		{
-			direction += Vector3.right;
-		}
-		
-		Move(direction);
+		Move(direction,rot);
 	}
 	
-	override protected void Move(Vector3 direction)
+	override protected void Move(Vector3 direction, Quaternion rot)
 	{
-		transform.position += direction.normalized * Speed;
+		transform.position += rot * direction * Speed;
 	}
 }

@@ -5,7 +5,8 @@ public abstract class AbstractPlayer : MonoBehaviour
 {
 	public GameObject Bullet;
 	public float MAX_HEALTH;
-	public int Speed;
+	public float Speed;
+	public float rotSpeed;
 	
 	protected int magazine;
 	protected float health;
@@ -17,5 +18,5 @@ public abstract class AbstractPlayer : MonoBehaviour
 							   transform.rotation);
 	}
 	
-	protected abstract void Move(Vector3 direction);
+	protected abstract void Move(Vector3 direction, Quaternion rotation);
 }
