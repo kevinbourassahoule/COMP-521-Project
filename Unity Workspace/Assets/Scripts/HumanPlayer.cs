@@ -3,11 +3,14 @@ using System.Collections;
 
 public class HumanPlayer : AbstractPlayer
 {
+	private VisibilityPolygon vision;
 
 	// Use this for initialization
 	void Start () {
 		Speed = 1f;
 		rotSpeed = 180f;
+		
+		vision = new VisibilityPolygon(this, walls);
 	}
 	
 	// Update is called once per frame
@@ -37,7 +40,7 @@ public class HumanPlayer : AbstractPlayer
 
 		
 		Move(direction,rot);
-		VisibilityPolygon visPoly = new VisibilityPolygon (transform.position, walls);
+		vision.RecomputePolygon();
 	}
 	
 	override protected void Move(Vector3 direction, Quaternion rot)

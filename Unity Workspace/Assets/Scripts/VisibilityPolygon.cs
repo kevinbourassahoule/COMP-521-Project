@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class VisibilityPolygon {
-	
+public class VisibilityPolygon 
+{
+	private Vector3 viewPosition;
+	private Transform walls;
+		
 	//takes in the position of the player and the parent game object that has all the walls as its children
 	private List<KeyValuePair<Vector2,float>> sortWalls(Vector3 player,Transform walls){
 		List<KeyValuePair<Vector2,float>> wallPoints = new List<KeyValuePair<Vector2,float>> ();
@@ -24,14 +27,22 @@ public class VisibilityPolygon {
 		return wallPoints;
 
 	}
+	
+	// Constructor
+	public VisibilityPolygon(AbstractPlayer player, Transform walls)
+	{
+		this.viewPosition = player.transform.position;
+		this.walls = walls;
+	}
+	
 	//takes in the position of the player and the parent game object that has all the walls as its children
-	 public VisibilityPolygon(Vector3 player, Transform walls){
+	public void RecomputePolygon()
+	{
 		List<Vector2> polygonVertices = new List<Vector2> ();
 		//sort the wall points
-		List<KeyValuePair<Vector2,float>> sortedWallPoints = sortWalls (player, walls);
+		List<KeyValuePair<Vector2,float>> sortedWallPoints = sortWalls (viewPosition, walls);
 		foreach (KeyValuePair<Vector2,float> wallPoint in sortedWallPoints) {
-			Debug.DrawRay(player,(wallPoint.Key - (Vector2) player).normalized);
+			Debug.DrawRay(viewPosition,(wallPoint.Key - (Vector2) viewPosition).normalized);
 		}
-
 	}
 }
