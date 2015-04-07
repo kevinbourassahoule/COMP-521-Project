@@ -6,7 +6,6 @@ public class VisibilityPolygon
 {
 	private Vector3 viewPosition;
 	private Transform walls;
-	private Transform player;
 	//takes in the position of the player and the parent game object that has all the walls as its children
 	private List<KeyValuePair<Vector2,float>> sortWalls(Vector3 player,Transform walls){
 		List<KeyValuePair<Vector2,float>> wallPoints = new List<KeyValuePair<Vector2,float>> ();
@@ -31,7 +30,6 @@ public class VisibilityPolygon
 	// Constructor
 	public VisibilityPolygon(AbstractPlayer playerClass, Transform walls)
 	{
-		this.player = playerClass.transform;
 		this.viewPosition = playerClass.transform.position;
 		this.walls = walls;
 	}
@@ -67,7 +65,7 @@ public class VisibilityPolygon
 		createPolygonMesh(polygonVertices);
 	}
 	private void createPolygonMesh(List<Vector3> polygonVertices){
-		Transform polygon = player.GetChild (0);
+		Transform polygon = GameObject.FindGameObjectWithTag("visibility").transform;
 		MeshFilter mf = polygon.GetComponent<MeshFilter> ();
 		Mesh mesh = mf.mesh;
 		mesh.Clear();
@@ -81,8 +79,9 @@ public class VisibilityPolygon
 		List <int> triangleVertices = new List<int> ();
 		for (int i = 0; i < mesh.vertices.Length -1; i++) {
 			triangleVertices.Add(0);
-			triangleVertices.Add(i);
+
 			triangleVertices.Add(i+1);
+			triangleVertices.Add(i);
 		}
 		mesh.triangles = triangleVertices.ToArray ();
 
