@@ -49,8 +49,11 @@
      <Compile Include="Assets\Scripts\AIPlayer.cs" />
      <Compile Include="Assets\Scripts\AbstractPlayer.cs" />
      <Compile Include="Assets\Scripts\Bullet.cs" />
+     <Compile Include="Assets\Scripts\Environment.cs" />
      <Compile Include="Assets\Scripts\HumanPlayer.cs" />
      <Compile Include="Assets\Scripts\Squad.cs" />
+     <Compile Include="Assets\Scripts\VisibilityPolygon.cs" />
+     <Compile Include="Assets\Scripts\WallBounds.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

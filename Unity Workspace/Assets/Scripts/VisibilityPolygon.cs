@@ -36,13 +36,14 @@ public class VisibilityPolygon
 	}
 	
 	//takes in the position of the player and the parent game object that has all the walls as its children
-	public void RecomputePolygon()
+	public void RecomputePolygon(Vector3 curViewPosition)
 	{
+		viewPosition = curViewPosition;
 		List<Vector2> polygonVertices = new List<Vector2> ();
 		//sort the wall points
 		List<KeyValuePair<Vector2,float>> sortedWallPoints = sortWalls (viewPosition, walls);
 		foreach (KeyValuePair<Vector2,float> wallPoint in sortedWallPoints) {
-			Debug.DrawRay(viewPosition,(wallPoint.Key - (Vector2) viewPosition).normalized);
+			Debug.DrawLine(viewPosition,wallPoint.Key);
 		}
 	}
 }

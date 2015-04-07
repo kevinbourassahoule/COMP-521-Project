@@ -40,7 +40,7 @@ public class HumanPlayer : AbstractPlayer
 
 		
 		Move(direction,rot);
-		vision.RecomputePolygon();
+		vision.RecomputePolygon(transform.position);
 	}
 	
 	override protected void Move(Vector3 direction, Quaternion rot)
