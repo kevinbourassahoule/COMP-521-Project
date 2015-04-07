@@ -8,7 +8,8 @@ public class Bullet : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		
+		transform.parent = GameObject.Find("Environment/Bullets").transform;
+		speed = Environment.BulletSpeed;
 	}
 	
 	// Update is called once per frame

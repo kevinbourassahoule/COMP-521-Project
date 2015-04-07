@@ -9,13 +9,13 @@ public class Environment : MonoBehaviour
 	public WallBounds[] Walls { get; private set; }
 	
 	// Bullet properties
-	public float BulletSpeed;
+	public static float BulletSpeed;
 
 	// Use this for initialization
 	void Start () 
 	{
-		Height = gameObject.GetComponent<Collider2D>().bounds.size.y;
-		Width  = gameObject.GetComponent<Collider2D>().bounds.size.x;
+//		Height = transform.FindChild("Map").GetComponent<Renderer>().bounds.size.y;
+//		Width  = transform.FindChild("Map").GetComponent<Renderer>().bounds.size.x;
 		Walls  = transform.FindChild("Walls").GetComponentsInChildren<WallBounds>();
 	}
 	
