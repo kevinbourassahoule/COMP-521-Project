@@ -47,19 +47,20 @@ public class VisibilityPolygon
 			if(hit.collider != null){
 			//maybe loosen up equality, if it hit the target wallpoint shoot another ray until failure
 				RaycastHit2D nextHit;
-				polygonVertices.Add(hit.point);
+				//polygonVertices.Add(hit.point);
 				if(Vector2.Distance(hit.point, wallPoint.Key) <= Vector2.kEpsilon){
 					nextHit = (Physics2D.Raycast(wallPoint.Key,(wallPoint.Key - (Vector2)viewPosition).normalized,100.0f));
 						//if theres a hit, update new starting point and last hit point
 						if(nextHit.collider != null){
 							hit = nextHit;
-							polygonVertices.Add(hit.point);
+							//polygonVertices.Add(hit.point);
 							
 						}
 				}
+				polygonVertices.Add(hit.point);
 				//hit now contains last collider on original path
 
-				Debug.DrawLine(curViewPosition,hit.point);
+				//Debug.DrawLine(curViewPosition,hit.point);
 			}
 		}
 		createPolygonMesh(polygonVertices);
@@ -83,6 +84,9 @@ public class VisibilityPolygon
 			triangleVertices.Add(i+1);
 			triangleVertices.Add(i);
 		}
+		triangleVertices.Add (0);
+		triangleVertices.Add (1);
+		triangleVertices.Add (mesh.vertices.Length-1);
 		mesh.triangles = triangleVertices.ToArray ();
 
 		//normals, all transform.forward
