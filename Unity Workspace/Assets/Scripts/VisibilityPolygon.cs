@@ -43,7 +43,22 @@ public class VisibilityPolygon
 		//sort the wall points
 		List<KeyValuePair<Vector2,float>> sortedWallPoints = sortWalls (viewPosition, walls);
 		foreach (KeyValuePair<Vector2,float> wallPoint in sortedWallPoints) {
-			Debug.DrawLine(viewPosition,wallPoint.Key);
+			RaycastHit2D hit =(Physics2D.Raycast(viewPosition,(wallPoint.Key - (Vector2)viewPosition).normalized,100.0f));
+			if(hit.collider != null){
+			//maybe loosen up equality, if it hit the target wallpoint shoot another ray until failure
+				RaycastHit2D nextHit;
+
+				if(Vector2.Distance(hit.point, wallPoint.Key) <= Vector2.kEpsilon){
+					nextHit = (Physics2D.Raycast(wallPoint.Key,(wallPoint.Key - (Vector2)viewPosition).normalized,100.0f));
+						//if theres a hit, update new starting point and last hit point
+						if(nextHit.collider != null)
+							hit = nextHit;
+							
+				}
+				//hit now contains last collider on original path
+				polygonVertices.Add((Vector2)hit.point);
+				Debug.DrawLine(curViewPosition,hit.point);
+			}
 		}
 	}
 }

@@ -9,11 +9,11 @@ public class WallBounds : MonoBehaviour {
 	public Vector2 topRight;
 	// Use this for initialization
 	void Start () {
-		Vector3 playerExtents = this.GetComponent<BoxCollider2D> ().size * 0.5f;
-		botLeft = new Vector2 (-playerExtents.x + transform.position.x, -playerExtents.y + transform.position.y);
-		botRight = new Vector2 (playerExtents.x + transform.position.x, -playerExtents.y + transform.position.y);
-		topLeft = new Vector2 (-playerExtents.x + transform.position.x, playerExtents.y + transform.position.y);
-		topRight = new Vector2 (playerExtents.x + transform.position.x, playerExtents.y + transform.position.y);
+		Vector3 playerExtents = this.GetComponent<BoxCollider2D> ().size * 0.5f ;
+		botLeft = new Vector2 ((-playerExtents.x* transform.localScale.x) + transform.position.x, -(playerExtents.y* transform.localScale.y) + transform.position.y);
+		botRight = new Vector2 ((playerExtents.x* transform.localScale.x) + transform.position.x, -(playerExtents.y* transform.localScale.y)+ transform.position.y);
+		topLeft = new Vector2 ((-playerExtents.x* transform.localScale.x) + transform.position.x, (playerExtents.y* transform.localScale.y) + transform.position.y);
+		topRight = new Vector2 ((playerExtents.x* transform.localScale.x) + transform.position.x, (playerExtents.y* transform.localScale.y) + transform.position.y);
 
 		Quaternion angle = Quaternion.Euler (transform.eulerAngles);
 		botLeft = RotatePoint2d (botLeft, angle);
