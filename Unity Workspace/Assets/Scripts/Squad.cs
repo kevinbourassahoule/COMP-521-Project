@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class Squad : MonoBehaviour 
 {
-	public int NumberOfSquadMembers;
+	public int Count;
 	public GameObject AIPlayerPrefab;
 
 	private Vector2 				objective;
@@ -18,13 +18,15 @@ public class Squad : MonoBehaviour
 	void Start () 
 	{
 		// Spawn squad members
-		for (int i = 0; i < NumberOfSquadMembers; i++)
+		for (int i = 0; i < this.Count; i++)
 		{
 			GameObject member = (GameObject) GameObject.Instantiate(AIPlayerPrefab,
 								   					   				(Vector2)transform.position + Vector2.right * i,	// TODO more graceful spawn position?
 								   					   				Quaternion.identity);
 			members.Add(member.GetComponent<AIPlayer>());
 		}
+		
+		objective = transform.position;
 		
 		currentState = Patrolling;
 	}
@@ -33,7 +35,19 @@ public class Squad : MonoBehaviour
 	void Update () 
 	{
 		currentState();
+		
+		MoveTowardsObjective();
 	}	
+	
+	private bool IsAtObjective()
+	{
+		return transform.position.Equals(objective);
+	}
+	
+	private void MoveTowardsObjective()
+	{
+		
+	}
 	
 	// TODO Could be cool if multiple enemies
 	private AIPlayer GetMemberClosestToTarget(AbstractPlayer target)
@@ -60,9 +74,23 @@ public class Squad : MonoBehaviour
 	 * STATES
 	 *********/
 	
+	// Squad has no idea where the enemy is
 	private void Patrolling()
 	{
+		// Start attacking if an enemy is in sight
+		if (enemiesInSight.Count != 0)
+		{
+			currentState = Attacking;
+			return;
+		}
 		
+		// Get random objective 
+		if (this.IsAtObjective())
+		{
+			// TODO optimize
+			objective.x = Random.Range(0, GameObject.Find("Environment").GetComponent<Environment>().Width);
+			objective.y = Random.Range(0, GameObject.Find("Environment").GetComponent<Environment>().Height);
+		}
 	}
 	
 	private void Attacking()

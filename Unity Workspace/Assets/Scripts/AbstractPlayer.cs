@@ -19,6 +19,22 @@ public abstract class AbstractPlayer : MonoBehaviour
 							   transform.position,
 							   transform.rotation);
 	}
+
+	// Called by a bullet when it hits this player
+	public void OnReceivedBullet ()
+	{
+		health--;
+		
+		if (health <= 0)
+		{
+			Die();
+		}
+	}
+	
+	private void Die()
+	{
+		GameObject.Destroy(this);
+	}
 	
 	protected abstract void Move(Vector3 direction, Quaternion rotation);
 }
