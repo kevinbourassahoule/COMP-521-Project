@@ -5,12 +5,11 @@ public class AIPlayer : AbstractPlayer
 {	
 	public AbstractPlayer Target { get; set; }
 	
-	private Squad squad;
+	public Squad Squad { private get; set; }
 	
 	// Use this for initialization
 	void Start () 
 	{
-		this.squad = GameObject.Find("Environment/Squad").GetComponent<Squad>(); // TODO change this if multiple squads
 	}
 	
 	// Update is called once per frame

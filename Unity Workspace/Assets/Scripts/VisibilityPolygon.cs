@@ -1,17 +1,17 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
 public class VisibilityPolygon 
 {
 	private Vector3 viewPosition;
-	private Transform walls;
+	private Wall[] walls;
+	
 	//takes in the position of the player and the parent game object that has all the walls as its children
-	private List<KeyValuePair<Vector2,float>> sortWalls(Vector3 player,Transform walls){
+	private List<KeyValuePair<Vector2,float>> sortWalls(Vector3 player,Wall[] walls){
 		List<KeyValuePair<Vector2,float>> wallPoints = new List<KeyValuePair<Vector2,float>> ();
-		foreach (Transform wall in walls) {
+		foreach (Wall wb in walls) {
 			//add to the list the key value pair, key:bound position; value; angular value
-			WallBounds wb = wall.GetComponent<WallBounds>();
 			wallPoints.Add(new KeyValuePair<Vector2, float>(wb.botLeft,Mathf.Atan2(wb.botLeft.y - player.y,wb.botLeft.x - player.x)));
 			wallPoints.Add(new KeyValuePair<Vector2, float>(wb.botRight,Mathf.Atan2(wb.botRight.y - player.y,wb.botRight.x - player.x)));
 			wallPoints.Add(new KeyValuePair<Vector2, float>(wb.topLeft,Mathf.Atan2(wb.topLeft.y - player.y,wb.topLeft.x - player.x)));
@@ -28,9 +28,9 @@ public class VisibilityPolygon
 	}
 	
 	// Constructor
-	public VisibilityPolygon(AbstractPlayer playerClass, Transform walls)
+	public VisibilityPolygon(AbstractPlayer player, Wall[] walls)
 	{
-		this.viewPosition = playerClass.transform.position;
+		this.viewPosition = player.transform.position;
 		this.walls = walls;
 	}
 	
@@ -66,7 +66,7 @@ public class VisibilityPolygon
 		createPolygonMesh(polygonVertices);
 	}
 	private void createPolygonMesh(List<Vector3> polygonVertices){
-		Transform polygon = GameObject.FindGameObjectWithTag("visibility").transform;
+		Transform polygon = GameObject.FindGameObjectWithTag("Visibility").transform;
 		MeshFilter mf = polygon.GetComponent<MeshFilter> ();
 		Mesh mesh = mf.mesh;
 		mesh.Clear();

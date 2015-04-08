@@ -9,13 +9,12 @@ public class Bullet : MonoBehaviour
 	void Start () 
 	{
 		transform.parent = GameObject.Find("Environment/Bullets").transform;
-		speed = Environment.BulletSpeed;
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
-		transform.position += transform.forward * speed;
+		transform.position += transform.right * Environment.Instance.BulletSpeed;
 	}
 	
 	void OnCollisionEnter2D(Collision2D coll) 
@@ -32,6 +31,6 @@ public class Bullet : MonoBehaviour
 				break;
 		}
 		
-		GameObject.Destroy(this);
+		GameObject.Destroy(gameObject);
 	}
 }

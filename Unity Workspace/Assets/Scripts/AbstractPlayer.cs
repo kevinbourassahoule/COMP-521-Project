@@ -3,21 +3,21 @@ using System.Collections;
 
 public abstract class AbstractPlayer : MonoBehaviour 
 {
-	public GameObject Bullet;
 	public float MAX_HEALTH;
 	public float Speed;
 	public float rotSpeed;
 	public float FOVangle;
-	public Transform walls;
 	
 	protected int magazine;
 	protected float health;
 	
 	protected void Shoot()
 	{
-		GameObject.Instantiate(Bullet,
-							   transform.position,
-							   transform.rotation);
+		GameObject bullet = (GameObject) GameObject.Instantiate(Environment.Instance.BulletPrefab,
+							  									transform.position,
+							   									transform.rotation);
+							   									
+		bullet.transform.parent = Environment.Instance.transform.FindChild("Bullets");
 	}
 
 	// Called by a bullet when it hits this player

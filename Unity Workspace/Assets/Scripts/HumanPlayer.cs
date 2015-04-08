@@ -10,7 +10,7 @@ public class HumanPlayer : AbstractPlayer
 		Speed = 1f;
 		rotSpeed = 180f;
 		
-		vision = new VisibilityPolygon(this, walls);
+		vision = new VisibilityPolygon(this, Environment.Walls);
 	}
 	
 	// Update is called once per frame

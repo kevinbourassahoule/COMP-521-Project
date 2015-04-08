@@ -3,9 +3,6 @@ using System.Collections.Generic;
 
 public class Squad : MonoBehaviour 
 {
-	public int Count;
-	public GameObject AIPlayerPrefab;
-
 	private Vector2 				objective;
 	private List<AIPlayer> 			members 		= new List<AIPlayer>();
 	private HashSet<AbstractPlayer> enemiesInSight 	= new HashSet<AbstractPlayer>();
@@ -18,12 +15,13 @@ public class Squad : MonoBehaviour
 	void Start () 
 	{
 		// Spawn squad members
-		for (int i = 0; i < this.Count; i++)
+		for (int i = 0; i < Environment.Instance.PlayersPerTeam; i++)
 		{
-			GameObject member = (GameObject) GameObject.Instantiate(AIPlayerPrefab,
-								   					   				(Vector2)transform.position + Vector2.right * i,	// TODO more graceful spawn position?
-								   					   				Quaternion.identity);
-			members.Add(member.GetComponent<AIPlayer>());
+			AIPlayer member = (AIPlayer) GameObject.Instantiate(Environment.Instance.AIPlayerPrefab,
+								   					   			(Vector2) transform.position + Vector2.right * i,	// TODO more graceful spawn position?
+								   					   			Quaternion.identity);
+			members.Add(member);
+			member.Squad = this;
 		}
 		
 		objective = transform.position;
@@ -87,9 +85,8 @@ public class Squad : MonoBehaviour
 		// Get random objective 
 		if (this.IsAtObjective())
 		{
-			// TODO optimize
-			objective.x = Random.Range(0, GameObject.Find("Environment").GetComponent<Environment>().Width);
-			objective.y = Random.Range(0, GameObject.Find("Environment").GetComponent<Environment>().Height);
+			objective.x = Random.Range(0, Environment.Width);
+			objective.y = Random.Range(0, Environment.Height);
 		}
 	}
 	

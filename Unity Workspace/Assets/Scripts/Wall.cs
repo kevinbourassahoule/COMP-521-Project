@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class WallBounds : MonoBehaviour {
+public class Wall : MonoBehaviour {
 
 	public Vector2 botLeft;
 	public Vector2 botRight;
