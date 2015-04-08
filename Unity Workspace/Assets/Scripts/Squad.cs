@@ -17,11 +17,11 @@ public class Squad : MonoBehaviour
 		// Spawn squad members
 		for (int i = 0; i < Environment.Instance.PlayersPerTeam; i++)
 		{
-			AIPlayer member = (AIPlayer) GameObject.Instantiate(Environment.Instance.AIPlayerPrefab,
-								   					   			(Vector2) transform.position + Vector2.right * i,	// TODO more graceful spawn position?
-								   					   			Quaternion.identity);
+			AIPlayer member = ((GameObject) GameObject.Instantiate(Environment.Instance.AIPlayerPrefab,
+								   					   			   (Vector2) transform.position + Vector2.right * i,	// TODO more graceful spawn position?
+								   					   			   Quaternion.identity)).GetComponent<AIPlayer>();
+			member.transform.parent = transform;
 			members.Add(member);
-			member.Squad = this;
 		}
 		
 		objective = transform.position;
@@ -44,7 +44,7 @@ public class Squad : MonoBehaviour
 	
 	private void MoveTowardsObjective()
 	{
-		
+		transform.position += (Vector3) ((objective - (Vector2)transform.position).normalized * Environment.Instance.PlayerMaxSpeed);
 	}
 	
 	// TODO Could be cool if multiple enemies
@@ -89,16 +89,21 @@ public class Squad : MonoBehaviour
 			objective.y = Random.Range(0, Environment.Height);
 		}
 	}
+	public bool IsPatrolling() { return currentState == Patrolling; }
+	
 	
 	private void Attacking()
 	{
 		
 	}
+	public bool IsAttacking() { return currentState == Attacking; }
+	
 	
 	private void GoingToLastSeenPosition()
 	{
 		
 	}
+	public bool IsGoingToLastSeenPosition() { return currentState == GoingToLastSeenPosition; }
 	
 	/************
 	 * CALLBACKS

@@ -2,12 +2,7 @@
 using System.Collections;
 
 public abstract class AbstractPlayer : MonoBehaviour 
-{
-	public float MAX_HEALTH;
-	public float Speed;
-	public float rotSpeed;
-	public float FOVangle;
-	
+{	
 	protected int magazine;
 	protected float health;
 	

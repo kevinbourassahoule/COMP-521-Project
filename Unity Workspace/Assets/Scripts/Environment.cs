@@ -22,6 +22,7 @@ public class Environment : MonoBehaviour
 	
 	// Prefabs
 	public GameObject	HumanPlayerPrefab;
+	public GameObject	SquadPrefab;
 	public GameObject	AIPlayerPrefab;
 	public GameObject 	BulletPrefab;
 	
@@ -52,7 +53,7 @@ public class Environment : MonoBehaviour
 			human.transform.parent = transform.FindChild("Teams");
 			
 			// Spawn enemy squads
-			GameObject squad = (GameObject) GameObject.Instantiate(AIPlayerPrefab, Vector2.zero, Quaternion.identity);
+			GameObject squad = (GameObject) GameObject.Instantiate(SquadPrefab, Vector2.zero, Quaternion.identity);
 			squad.transform.parent = transform.FindChild("Teams");
 			
 			break;

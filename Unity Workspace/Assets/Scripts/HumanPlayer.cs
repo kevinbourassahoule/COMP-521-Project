@@ -4,12 +4,10 @@ using System.Collections;
 public class HumanPlayer : AbstractPlayer
 {
 	private VisibilityPolygon vision;
+	private const float ROT_SPEED = 180f;
 
 	// Use this for initialization
-	void Start () {
-		Speed = 1f;
-		rotSpeed = 180f;
-		
+	void Start () {		
 		vision = new VisibilityPolygon(this, Environment.Walls);
 	}
 	
@@ -17,7 +15,7 @@ public class HumanPlayer : AbstractPlayer
 	void Update () 
 	{
 		// Handle orientation
-		Quaternion rot = Quaternion.Euler (0.0f,0.0f,transform.rotation.eulerAngles.z - Input.GetAxis ("Horizontal") * rotSpeed * Time.deltaTime);
+		Quaternion rot = Quaternion.Euler (0.0f,0.0f,transform.rotation.eulerAngles.z - Input.GetAxis ("Horizontal") * ROT_SPEED * Time.deltaTime);
 		transform.rotation = rot;
 		//dont know if we still need this
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -45,6 +43,6 @@ public class HumanPlayer : AbstractPlayer
 	
 	override protected void Move(Vector3 direction, Quaternion rot)
 	{
-		transform.position += rot * direction * Speed;
+		transform.position += rot * direction * Environment.Instance.PlayerMaxSpeed;
 	}
 }
