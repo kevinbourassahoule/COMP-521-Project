@@ -23,6 +23,7 @@ public class Bullet : MonoBehaviour
 		switch (coll.gameObject.tag)
 		{
 			case "Wall":
+				GameObject.Destroy(gameObject);
 				break;
 			case "Player":
 				coll.gameObject.GetComponent<AbstractPlayer>().OnReceivedBullet();
@@ -30,7 +31,5 @@ public class Bullet : MonoBehaviour
 			default:
 				break;
 		}
-		
-		GameObject.Destroy(gameObject);
 	}
 }
