@@ -78,7 +78,8 @@ public class AIPlayer : AbstractPlayer
 		Vector2 lookAtForces   = Vector2.zero;
 		Vector2 movementForces = Vector2.zero;
 		Vector2 currForce      = Vector2.zero;
-	
+		Vector2 currMovementForce = Vector2.zero;
+		Vector2 currLookAtForce = Vector2.zero;
 		Collider2D[] nearbyObjects = Physics2D.OverlapCircleAll(transform.position, OBJECT_INFLUENCE_DISTANCE);	// TODO layer mask?
 		
 		// Follow squad
@@ -119,20 +120,24 @@ public class AIPlayer : AbstractPlayer
 												? closestCover.coverLeftPoint : closestCover.coverRightPoint;
 				Vector2 coverForce  = (coverChoice - (Vector2)transform.position).normalized / 
 											Vector2.Distance (coverChoice,(Vector2) transform.position);
-				currForce += coverForce + attackPlayerForce;
+				currForce += 2.0f*coverForce + attackPlayerForce;
 			}
 		}
 
 		//add forces
 		movementForces += currForce;
-		lookAtForces   += currForce;
+		//lookAtForces   += currForce;
 
 		// Update position
 		transform.position = Vector3.MoveTowards(transform.position, transform.position + (Vector3) movementForces, Environment.Instance.PlayerMaxSpeed);
 		
 		// Update rotation
-		transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(lookAtForces.y, lookAtForces.x) * Mathf.Rad2Deg, 
-												  Vector3.forward);
+		Vector3 moveDirection = (transform.position + (Vector3) movementForces) - transform.position;
+		if (moveDirection != Vector3.zero)
+		{ 
+			transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg,Vector3.forward); 
+		}
+
 	}
 
 	public override void Die()
