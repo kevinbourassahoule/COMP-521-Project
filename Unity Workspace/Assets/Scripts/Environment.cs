@@ -42,7 +42,7 @@ public class Environment : MonoBehaviour
 		Height = transform.FindChild("Map/Floor").GetComponent<Renderer>().bounds.size.y;
 		Width  = transform.FindChild("Map/Floor").GetComponent<Renderer>().bounds.size.x;
 		Walls  = transform.FindChild("Map/Walls").GetComponentsInChildren<Wall>();
-		
+		PlayerFOVAngle = 180.0f;
 		// Spawn players 
 		// FIXME 1v1 for now...
 		switch (Type)
@@ -53,7 +53,7 @@ public class Environment : MonoBehaviour
 				// Spawn human player
 				team = new GameObject("Team0");
 				team.transform.parent = transform.FindChild("Teams");
-				GameObject human = (GameObject) GameObject.Instantiate(HumanPlayerPrefab, new Vector2(Width * .5f, Height * .5f), Quaternion.identity);
+				GameObject human = (GameObject) GameObject.Instantiate(HumanPlayerPrefab, new Vector2(Width *.1f, Height*.1f), Quaternion.identity);
 				human.transform.parent = team.transform;
 				
 				// Spawn enemy squads

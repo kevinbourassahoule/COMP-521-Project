@@ -104,7 +104,6 @@ public class Squad : MonoBehaviour
 		//if we do not see the player go to last scene position
 		if(enemiesInSight.Count == 0)
 		{
-			Debug.Log("Enemy Lost");
 			objective = lastSeenPosition;
 			currentState = GoingToLastSeenPosition;
 			return;

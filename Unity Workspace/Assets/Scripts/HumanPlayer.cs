@@ -41,4 +41,8 @@ public class HumanPlayer : AbstractPlayer
 
 		vision.RecomputePolygon(transform.position);
 	}
+	public override void Die()
+	{
+		GameObject.Destroy(gameObject);
+	}
 }

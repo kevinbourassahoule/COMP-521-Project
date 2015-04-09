@@ -8,7 +8,7 @@ public class Bullet : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		transform.parent = GameObject.Find("Environment/Bullets").transform;
+		//transform.parent = GameObject.Find("Environment/Bullets").transform;
 	}
 	
 	// Update is called once per frame
@@ -26,7 +26,17 @@ public class Bullet : MonoBehaviour
 				GameObject.Destroy(gameObject);
 				break;
 			case "Player":
-				coll.gameObject.GetComponent<AbstractPlayer>().OnReceivedBullet();
+				//turn off friendly fire
+				if(transform.parent.parent != coll.transform.parent)
+				{
+					coll.gameObject.GetComponent<AbstractPlayer>().OnReceivedBullet();
+				}
+				break;
+			case "HumanPlayer":
+				if(transform.parent.parent != coll.transform.parent)
+				{
+					coll.gameObject.GetComponent<AbstractPlayer>().OnReceivedBullet();
+				}
 				break;
 			default:
 				break;

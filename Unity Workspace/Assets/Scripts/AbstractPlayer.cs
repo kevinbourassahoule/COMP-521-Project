@@ -12,7 +12,8 @@ public abstract class AbstractPlayer : MonoBehaviour
 							  									transform.position,
 							   									transform.rotation);
 							   									
-		bullet.transform.parent = Environment.Instance.transform.FindChild("Bullets");
+		//bullet.transform.parent = Environment.Instance.transform.FindChild("Bullets");
+		bullet.transform.parent = transform;
 	}
 
 	// Called by a bullet when it hits this player
@@ -26,9 +27,6 @@ public abstract class AbstractPlayer : MonoBehaviour
 		}
 	}
 	
-	private void Die()
-	{
-		GameObject.Destroy(gameObject);
-	}
-	protected void killedPlayer(AbstractPlayer deadPlayer){} 
+	public abstract void Die ();
+	protected void killedPlayer (AbstractPlayer deadPlayer){}
 }
