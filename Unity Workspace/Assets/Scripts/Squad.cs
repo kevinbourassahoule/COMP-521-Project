@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 public class Squad : MonoBehaviour 
 {
-	private Vector2 				objective;
-	private List<AIPlayer> 			members 		= new List<AIPlayer>();
-	private HashSet<AbstractPlayer> enemiesInSight 	= new HashSet<AbstractPlayer>();
+	private Vector2 				       objective;
+	private List<AIPlayer> 				   members 		    = new List<AIPlayer>();
+	private Dictionary<AbstractPlayer,int> enemiesInSight 	= new Dictionary<AbstractPlayer,int>();
 	
 	// A reference to the squad's current state
 	private delegate void State();
@@ -117,11 +117,17 @@ public class Squad : MonoBehaviour
 	 
 	public void OnEnemyDetected(AbstractPlayer enemy)
 	{
-		enemiesInSight.Add(enemy);
+		if (!enemiesInSight.ContainsKey(enemy))
+		{
+			enemiesInSight.Add(enemy);
+		}
+		else {
+			enemiesInSight[enemy]++;
+		}
 	}
 	
 	public void OnLostSightOfEnemy(AbstractPlayer enemy)
 	{
-		enemiesInSight.Remove(enemy);
+		enemiesInSight[enemy]--;
 	}
 }

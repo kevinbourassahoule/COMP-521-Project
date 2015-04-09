@@ -20,7 +20,7 @@ public class HumanPlayer : AbstractPlayer
 		transform.right = mousePos - transform.position;
 		
 		// Handle shooting
-		if (Input.GetKeyDown(KeyCode.Mouse0))
+		if (Input.GetKey(KeyCode.Mouse0))
 		{
 			Shoot();
 		}

@@ -28,6 +28,6 @@ public abstract class AbstractPlayer : MonoBehaviour
 	
 	private void Die()
 	{
-		GameObject.Destroy(this);
+		GameObject.Destroy(gameObject);
 	}
 }
