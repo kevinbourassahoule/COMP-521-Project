@@ -75,31 +75,57 @@ public class AIPlayer : AbstractPlayer
 	
 	private void ApplyForces()
 	{
-		Vector2 lookAtForces = Vector2.zero;
+		Vector2 lookAtForces   = Vector2.zero;
 		Vector2 movementForces = Vector2.zero;
-		Vector2 currForce;
+		Vector2 currForce      = Vector2.zero;
 	
 		Collider2D[] nearbyObjects = Physics2D.OverlapCircleAll(transform.position, OBJECT_INFLUENCE_DISTANCE);	// TODO layer mask?
 		
 		// Follow squad
 		movementForces += (Vector2)(squad.transform.position - transform.position);
-		
+		float closestCoverDistance = float.MaxValue;
+		Wall closestCover          = null;
 		foreach (Collider2D coll in nearbyObjects) {
-			currForce = (Vector2)(coll.transform.position - transform.position).normalized / 
-				Vector3.Distance (coll.transform.position, transform.position);
-				
 			if (coll.tag == "Player" && !coll.gameObject.Equals (gameObject)) {
-				movementForces -= currForce;
-				lookAtForces -= currForce;
+				currForce -= (Vector2)(coll.transform.position - transform.position).normalized / 
+					Vector3.Distance (coll.transform.position, transform.position);
+			}
+			//if theres a wall near us and were attacking find the closest cover point
+			if(coll.tag == "Wall" && squad.IsAttacking())
+			{
+				float curCoverDistance = Vector3.Distance(coll.transform.position,transform.position);
+				if(curCoverDistance < closestCoverDistance)
+				{
+					closestCoverDistance = curCoverDistance;
+					closestCover         = coll.transform.GetComponent<Wall>();
+				}
 			}
 		}
+		//need to consider cover points if attacking
 		if(squad.IsAttacking())
 		{
-			currForce = (lastSeenPositionFromSquad - (Vector2)transform.position).normalized / 
-				Vector2.Distance (lastSeenPositionFromSquad,(Vector2) transform.position);
-			movementForces += currForce;
-			lookAtForces += currForce;
+			Vector2 attackPlayerForce = (lastSeenPositionFromSquad - (Vector2)transform.position).normalized / 
+											Vector2.Distance (lastSeenPositionFromSquad,(Vector2) transform.position);
+			if(closestCover == null)
+			{
+				currForce += 2.0f*attackPlayerForce;
+				
+			}
+			else
+			{
+				//TODO this could be wrong, may have to optimize, pick further cover between the two
+				Vector2 coverChoice = (Vector2.Distance(closestCover.coverLeftPoint,lastSeenPositionFromSquad) > 
+				                          Vector2.Distance(closestCover.coverRightPoint,lastSeenPositionFromSquad)) 
+												? closestCover.coverLeftPoint : closestCover.coverRightPoint;
+				Vector2 coverForce  = (coverChoice - (Vector2)transform.position).normalized / 
+											Vector2.Distance (coverChoice,(Vector2) transform.position);
+				currForce += coverForce + attackPlayerForce;
+			}
 		}
+
+		//add forces
+		movementForces += currForce;
+		lookAtForces   += currForce;
 
 		// Update position
 		transform.position = Vector3.MoveTowards(transform.position, transform.position + (Vector3) movementForces, Environment.Instance.PlayerMaxSpeed);
