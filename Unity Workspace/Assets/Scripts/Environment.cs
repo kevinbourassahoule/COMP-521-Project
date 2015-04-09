@@ -39,8 +39,11 @@ public class Environment : MonoBehaviour
 	{
 		Instance = GetComponent<Environment>();
 		
-		Height = transform.FindChild("Map/Floor").GetComponent<Renderer>().bounds.size.y;
+		/*Height = transform.FindChild("Map/Floor").GetComponent<Renderer>().bounds.size.y;
 		Width  = transform.FindChild("Map/Floor").GetComponent<Renderer>().bounds.size.x;
+		*/
+		Height = transform.FindChild("Map/TopLeft").position.y - transform.FindChild("Map/BotLeft").position.y; 
+		Width = transform.FindChild("Map/BotRight").position.x - transform.FindChild("Map/BotLeft").position.x;
 		Walls  = transform.FindChild("Map/Walls").GetComponentsInChildren<Wall>();
 		PlayerFOVAngle = 180.0f;
 		// Spawn players 
@@ -53,7 +56,7 @@ public class Environment : MonoBehaviour
 				// Spawn human player
 				team = new GameObject("Team0");
 				team.transform.parent = transform.FindChild("Teams");
-				GameObject human = (GameObject) GameObject.Instantiate(HumanPlayerPrefab, new Vector2(Width *.1f, Height*.1f), Quaternion.identity);
+			GameObject human = (GameObject) GameObject.Instantiate(HumanPlayerPrefab, new Vector2(Width*.1f, Height*.1f), Quaternion.identity);
 				human.transform.parent = team.transform;
 				
 				// Spawn enemy squads
@@ -61,7 +64,7 @@ public class Environment : MonoBehaviour
 				{
 					team = new GameObject("Team" + (i + 1).ToString());
 					team.transform.parent = transform.FindChild("Teams");
-					GameObject squad = (GameObject) GameObject.Instantiate(SquadPrefab, new Vector2(Width * .5f, Height * .5f), Quaternion.identity);
+					GameObject squad = (GameObject) GameObject.Instantiate(SquadPrefab, new Vector2(Width*.75f, Height*.75f), Quaternion.identity);
 					squad.transform.parent = team.transform;
 				
 				}
