@@ -8,6 +8,7 @@ public class HumanPlayer : AbstractPlayer
 
 	// Use this for initialization
 	void Start () {		
+		health = Environment.Instance.PlayerMaxHealth;
 		vision = new VisibilityPolygon(this, Environment.Walls);
 	}
 	

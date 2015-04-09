@@ -12,6 +12,7 @@ public class AIPlayer : AbstractPlayer
 	// Use this for initialization
 	void Start () 
 	{
+		health = Environment.Instance.PlayerMaxHealth;
 		squad = transform.parent.FindChild("Squad").GetComponent<Squad>();
 	}
 	
@@ -27,6 +28,7 @@ public class AIPlayer : AbstractPlayer
 	private bool SeesTarget()
 	{
 		// Check whether the target is within this player's field of view
+		Debug.DrawRay(transform.forward, Target.transform.position - transform.position);
 		if (Vector3.Angle(transform.forward, Target.transform.position - transform.position) > Environment.Instance.PlayerFOVAngle)
 		{
 			return false;
@@ -54,23 +56,34 @@ public class AIPlayer : AbstractPlayer
 	
 	private void ApplyForces()
 	{
-		Vector2 accumulatedForces = Vector2.zero;
+		Vector2 lookAtForces = Vector2.zero;
+		Vector2 movementForces = Vector2.zero;
+		Vector2 currForce;
+	
 		Collider2D[] nearbyObjects = Physics2D.OverlapCircleAll(transform.position, OBJECT_INFLUENCE_DISTANCE);	// TODO layer mask?
 		
 		// Follow squad
-		accumulatedForces += (Vector2) (squad.transform.position - transform.position);
+		movementForces += (Vector2) (squad.transform.position - transform.position);
 		
-		if (squad.IsPatrolling())
+		foreach (Collider2D coll in nearbyObjects)
 		{
-			foreach (Collider2D coll in nearbyObjects)
-			{
+			currForce = (Vector2) (coll.transform.position - transform.position).normalized / 
+						Vector3.Distance(coll.transform.position, transform.position);
 				
+			if (coll.tag == "Player" && !coll.gameObject.Equals(gameObject))
+			{
+				movementForces -= currForce;
+				lookAtForces -= currForce;
 			}
 		}
 		
-		accumulatedForces = accumulatedForces.normalized * Environment.Instance.PlayerMaxSpeed;
+		// Update position
+		transform.position = Vector3.MoveTowards(transform.position, transform.position + (Vector3) movementForces, Environment.Instance.PlayerMaxSpeed);
 		
-		transform.position += (Vector3) accumulatedForces;
+		// Update rotation
+		
+		transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(lookAtForces.y, lookAtForces.x) * Mathf.Rad2Deg, 
+												  Vector3.forward);
 	}
 	
 	// TODO Could be cool for squad decision-making

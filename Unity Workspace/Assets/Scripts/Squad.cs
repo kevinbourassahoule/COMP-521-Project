@@ -20,7 +20,7 @@ public class Squad : MonoBehaviour
 		for (int i = 0; i < Environment.Instance.PlayersPerTeam; i++)
 		{
 			AIPlayer member = ((GameObject) GameObject.Instantiate(Environment.Instance.AIPlayerPrefab,
-								   					   			   (Vector2) transform.position + Vector2.right * i,	// TODO more graceful spawn position?
+								   					   			   (Vector2) transform.position + Vector2.right * i * .1f,	// TODO more graceful spawn position?
 								   					   			   Quaternion.identity)).GetComponent<AIPlayer>();
 			member.transform.parent = transform.parent;
 			members.Add(member);
@@ -44,7 +44,8 @@ public class Squad : MonoBehaviour
 	
 	private bool IsAtObjective()
 	{
-		return ((Vector2)transform.position).Equals(objective);
+//		Debug.Log(transform.position + ", " + objective + ", " + ((Vector2)transform.position).Equals(objective));
+		return Vector2.Distance(transform.position, objective) < Vector2.kEpsilon;
 	}
 	
 	private void MoveTowardsObjective()
