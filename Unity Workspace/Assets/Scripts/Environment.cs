@@ -61,7 +61,7 @@ public class Environment : MonoBehaviour
 				{
 					team = new GameObject("Team" + (i + 1).ToString());
 					team.transform.parent = transform.FindChild("Teams");
-				GameObject squad = (GameObject) GameObject.Instantiate(SquadPrefab, new Vector2(Width * .5f, Height * .5f), Quaternion.identity);
+					GameObject squad = (GameObject) GameObject.Instantiate(SquadPrefab, new Vector2(Width * .5f, Height * .5f), Quaternion.identity);
 					squad.transform.parent = team.transform;
 				
 				}

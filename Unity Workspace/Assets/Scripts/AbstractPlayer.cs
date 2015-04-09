@@ -30,4 +30,5 @@ public abstract class AbstractPlayer : MonoBehaviour
 	{
 		GameObject.Destroy(gameObject);
 	}
+	protected void killedPlayer(AbstractPlayer deadPlayer){} 
 }

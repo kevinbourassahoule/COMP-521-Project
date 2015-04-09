@@ -6,7 +6,7 @@ public class Squad : MonoBehaviour
 	private Vector2 				       objective;
 	private List<AIPlayer> 				   members 		    = new List<AIPlayer>();
 	private Dictionary<AbstractPlayer,int> enemiesInSight 	= new Dictionary<AbstractPlayer,int>();
-	
+	public  Vector2                        lastSeenPosition { get; set; }
 	// A reference to the squad's current state
 	private delegate void State();
 	private State currentState;
@@ -23,6 +23,7 @@ public class Squad : MonoBehaviour
 								   					   			   (Vector2) transform.position + Vector2.right * i * .1f,	// TODO more graceful spawn position?
 								   					   			   Quaternion.identity)).GetComponent<AIPlayer>();
 			member.transform.parent = transform.parent;
+			member.Target = GameObject.FindGameObjectWithTag ("HumanPlayer").GetComponent<AbstractPlayer>();
 			members.Add(member);
 		}
 		
@@ -100,14 +101,33 @@ public class Squad : MonoBehaviour
 	
 	private void Attacking()
 	{
-		
+		//if we do not see the player go to last scene position
+		if(enemiesInSight.Count == 0)
+		{
+			Debug.Log("Enemy Lost");
+			objective = lastSeenPosition;
+			currentState = GoingToLastSeenPosition;
+			return;
+		}
 	}
 	public bool IsAttacking() { return currentState == Attacking; }
 	
 	
 	private void GoingToLastSeenPosition()
 	{
-		
+		// Start attacking if an enemy is in sight
+		if (enemiesInSight.Count != 0)
+		{
+			currentState = Attacking;
+			return;
+		}
+		//check to see if player is there
+		if(this.IsAtObjective())
+		{
+			currentState = Patrolling;
+			return;
+		}
+
 	}
 	public bool IsGoingToLastSeenPosition() { return currentState == GoingToLastSeenPosition; }
 	
@@ -117,9 +137,10 @@ public class Squad : MonoBehaviour
 	 
 	public void OnEnemyDetected(AbstractPlayer enemy)
 	{
+		lastSeenPosition = (Vector2) enemy.transform.position;
 		if (!enemiesInSight.ContainsKey(enemy))
 		{
-			enemiesInSight.Add(enemy);
+			enemiesInSight.Add(enemy,1);
 		}
 		else {
 			enemiesInSight[enemy]++;
@@ -129,5 +150,9 @@ public class Squad : MonoBehaviour
 	public void OnLostSightOfEnemy(AbstractPlayer enemy)
 	{
 		enemiesInSight[enemy]--;
+		if(enemiesInSight[enemy] == 0)
+		{
+			enemiesInSight.Remove(enemy);
+		}
 	}
 }
