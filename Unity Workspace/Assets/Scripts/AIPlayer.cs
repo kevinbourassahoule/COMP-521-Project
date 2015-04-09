@@ -20,6 +20,11 @@ public class AIPlayer : AbstractPlayer
 	void Update () 
 	{
 		ApplyForces();
+
+		if(SeesTarget())
+		{
+			squad.OnEnemyDetected(Target);
+		}
 	}
 	
 	/*
@@ -28,20 +33,22 @@ public class AIPlayer : AbstractPlayer
 	private bool SeesTarget()
 	{
 		// Check whether the target is within this player's field of view
-		Debug.DrawRay(transform.forward, Target.transform.position - transform.position);
-		if (Vector3.Angle(transform.forward, Target.transform.position - transform.position) > Environment.Instance.PlayerFOVAngle)
+		Debug.DrawRay(transform.position, Target.transform.position - transform.position);
+		if (Vector3.Angle(transform.right, Target.transform.position - transform.position) > Environment.Instance.PlayerFOVAngle)
 		{
 			return false;
 		}
-	
+
 		// Send a ray in the direction of the target 
-		RaycastHit2D hit = Physics2D.Raycast(transform.position,
-		                                     Target.transform.position - transform.position,
+		Vector2 direction = (Target.transform.position - transform.position).normalized;
+		RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + 0.2f*direction,
+		                                     direction,
 		                                     LayerMask.GetMask("Player"));
-		
+		Debug.Log (hit.transform.name);
 		// Check if the ray hit the target
-		if (hit.collider != null && hit.collider.gameObject.Equals(Target.gameObject))
+		if (hit.collider != null && hit.transform == Target.transform)
 		{
+			Debug.Log ("SEEEN");
 			return true;
 		}
 		else {
