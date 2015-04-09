@@ -30,6 +30,4 @@ public abstract class AbstractPlayer : MonoBehaviour
 	{
 		GameObject.Destroy(this);
 	}
-	
-	protected abstract void Move(Vector3 direction, Quaternion rotation);
 }

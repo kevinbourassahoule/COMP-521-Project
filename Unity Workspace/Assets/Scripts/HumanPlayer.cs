@@ -14,18 +14,10 @@ public class HumanPlayer : AbstractPlayer
 	
 	// Update is called once per frame
 	void Update () 
-	{
-		// Handle orientation
-		Quaternion rot = Quaternion.Euler (0.0f,0.0f,transform.rotation.eulerAngles.z - Input.GetAxis ("Horizontal") * ROT_SPEED * Time.deltaTime);
-		transform.rotation = rot;
-		//dont know if we still need this
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-		
-		if (Physics.Raycast(ray, out hit))
-		{
-			transform.LookAt(hit.point);
-		}
+	{		
+		Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		mousePos.z = 0;
+		transform.right = mousePos - transform.position;
 		
 		// Handle shooting
 		if (Input.GetKeyDown(KeyCode.Mouse0))
@@ -35,15 +27,18 @@ public class HumanPlayer : AbstractPlayer
 		
 		// Handle movement
 		Vector3 direction = Vector3.zero;
-		direction.x = Input.GetAxis ("Vertical") * Time.deltaTime;
-
+		if (Input.GetKey(KeyCode.W))
+			direction += Vector3.up;
+		if (Input.GetKey(KeyCode.S))
+			direction += -Vector3.up;
+		if (Input.GetKey(KeyCode.D))
+			direction += Vector3.right;
+		if (Input.GetKey(KeyCode.A))
+			direction += -Vector3.right;
+			
+		transform.position = Vector3.MoveTowards(transform.position, transform.position + direction, Environment.Instance.PlayerMaxSpeed);
 		
-		Move(direction,rot);
+
 		vision.RecomputePolygon(transform.position);
-	}
-	
-	override protected void Move(Vector3 direction, Quaternion rot)
-	{
-		transform.position += rot * direction * Environment.Instance.PlayerMaxSpeed;
 	}
 }

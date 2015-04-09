@@ -49,11 +49,6 @@ public class AIPlayer : AbstractPlayer
 		}
 	}
 	
-	override protected void Move(Vector3 direction, Quaternion rotation)
-	{
-		
-	}
-	
 	private void ApplyForces()
 	{
 		Vector2 lookAtForces = Vector2.zero;
@@ -81,7 +76,6 @@ public class AIPlayer : AbstractPlayer
 		transform.position = Vector3.MoveTowards(transform.position, transform.position + (Vector3) movementForces, Environment.Instance.PlayerMaxSpeed);
 		
 		// Update rotation
-		
 		transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(lookAtForces.y, lookAtForces.x) * Mathf.Rad2Deg, 
 												  Vector3.forward);
 	}
