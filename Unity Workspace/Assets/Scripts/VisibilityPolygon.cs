@@ -55,35 +55,42 @@ public class VisibilityPolygon
 		RaycastHit2D Hit;
 		List<Vector3> hitPoints = new List<Vector3> ();
 		Hit = (Physics2D.CircleCast(start,0.001f,direction,100.0f,LayerMask.GetMask("Wall")));
-		if(Hit.collider != null && Hit.distance > Vector2.kEpsilon){
+		if(Hit.collider != null && Hit.distance > .1f){
 			RaycastHit2D nextHit;
-			nextHit = (Physics2D.Raycast(Hit.point + .05f*direction,direction,100.0f,LayerMask.GetMask("Wall")));
-			if(nextHit.collider != null && nextHit.distance > Vector2.kEpsilon){
-				//calculate the angle from the player to the wall position
-				float transformAngle = Mathf.Atan2(Hit.collider.transform.position.y - viewPosition.y,Hit.collider.transform.position.x - viewPosition.x);
-				//calculate angle from player to our raycast hit
-				float hitAngle  = Mathf.Atan2(Hit.point.y - viewPosition.y,Hit.point.x - viewPosition.x);
-				//decide which hit to store first.
-				if(transformAngle > hitAngle){
-					hitPoints.Add (nextHit.point);
-					List<Vector3> tempList = getAllHits(nextHit.point,direction);
-					if(tempList.Count > 0)
-						hitPoints.AddRange(tempList);
-					hitPoints.Add (Hit.point);
-				}
-				else{
-					hitPoints.Add (Hit.point);
-					List<Vector3> tempList = getAllHits(nextHit.point,direction);
-					if(tempList.Count > 0)
-						hitPoints.AddRange(tempList);
-					hitPoints.Add (nextHit.point);
+			//check to see if raycasting will result in us being inside our current wall
+			if(!Physics2D.OverlapCircle(Hit.point + .1f*direction,0.00001f)){
+				Debug.DrawLine(Hit.point + .1f*direction,Hit.point);
+				//get the next hit, start position slightly offset in the hit direction
+				nextHit = (Physics2D.CircleCast(Hit.point + .1f*direction,0.001f,direction,100.0f,LayerMask.GetMask("Wall")));
+				if(nextHit.collider != null && nextHit.distance > Vector2.kEpsilon){
+					//decide which hit to store first.
+					//calculate the angle from the player to the wall position
+					float transformAngle = 0.0f;
+					//calculate angle from player to our raycast hit
+					float hitAngle       = 0.0f;
+					//if the wall is to the left of our player, compare the angles relative to up
+					if(Hit.collider.transform.position.x - viewPosition.x <=0){
+						transformAngle = Vector2.Angle(Vector2.up,(Vector2)Hit.collider.transform.position - (Vector2)viewPosition);
+						hitAngle       = Vector2.Angle(Vector2.up,Hit.point - (Vector2)viewPosition);
+					//otherwise the wall is to the right so compare to down
+					}else{
+						transformAngle = Vector2.Angle(-Vector2.up,(Vector2)Hit.collider.transform.position - (Vector2)viewPosition);
+						hitAngle       = Vector2.Angle(-Vector2.up,Hit.point - (Vector2)viewPosition);
+					}
+					if(transformAngle >= hitAngle){
+						hitPoints.Add (nextHit.point);
+						hitPoints.Add (Hit.point);
+					}
+					else{
+						hitPoints.Add (Hit.point);
+						hitPoints.Add (nextHit.point);
+					}
 				}
 			}
-
-			else{//didnt hit a corner just add the point
-				hitPoints.Add(Hit.point);
+			//didnt hit a corner just add the point
+			else{
+					hitPoints.Add(Hit.point);
 			}
-
 		}
 		return hitPoints;
 	}
