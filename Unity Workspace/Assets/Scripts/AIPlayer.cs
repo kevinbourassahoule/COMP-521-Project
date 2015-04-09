@@ -92,7 +92,7 @@ public class AIPlayer : AbstractPlayer
 					Vector3.Distance (coll.transform.position, transform.position);
 			}
 			//if theres a wall near us and were attacking find the closest cover point
-			if(coll.tag == "Wall" && squad.IsAttacking())
+			if(coll.tag == "Wall" && (squad.IsAttacking() || squad.IsGoingToLastSeenPosition()))
 			{
 				float curCoverDistance = Vector3.Distance(coll.transform.position,transform.position);
 				if(curCoverDistance < closestCoverDistance)
@@ -103,13 +103,13 @@ public class AIPlayer : AbstractPlayer
 			}
 		}
 		//need to consider cover points if attacking
-		if(squad.IsAttacking())
+		if(squad.IsAttacking() || squad.IsGoingToLastSeenPosition())
 		{
 			Vector2 attackPlayerForce = (lastSeenPositionFromSquad - (Vector2)transform.position).normalized / 
 											Vector2.Distance (lastSeenPositionFromSquad,(Vector2) transform.position);
 			if(closestCover == null)
 			{
-				currForce += 2.0f*attackPlayerForce;
+				currForce += attackPlayerForce;
 				
 			}
 			else
@@ -120,7 +120,7 @@ public class AIPlayer : AbstractPlayer
 												? closestCover.coverLeftPoint : closestCover.coverRightPoint;
 				Vector2 coverForce  = (coverChoice - (Vector2)transform.position).normalized / 
 											Vector2.Distance (coverChoice,(Vector2) transform.position);
-				currForce += 2.0f*coverForce + attackPlayerForce;
+				currForce += coverForce + attackPlayerForce;
 			}
 		}
 
