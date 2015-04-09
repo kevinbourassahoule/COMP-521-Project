@@ -12,7 +12,7 @@ public class AIPlayer : AbstractPlayer
 	// Use this for initialization
 	void Start () 
 	{
-		squad = transform.parent.GetComponent<Squad>();
+		squad = transform.parent.FindChild("Squad").GetComponent<Squad>();
 	}
 	
 	// Update is called once per frame
@@ -62,7 +62,10 @@ public class AIPlayer : AbstractPlayer
 		
 		if (squad.IsPatrolling())
 		{
-			
+			foreach (Collider2D coll in nearbyObjects)
+			{
+				
+			}
 		}
 		
 		accumulatedForces = accumulatedForces.normalized * Environment.Instance.PlayerMaxSpeed;

@@ -25,7 +25,7 @@ public class HumanPlayer : AbstractPlayer
 		{
 			transform.LookAt(hit.point);
 		}
-			
+		
 		// Handle shooting
 		if (Input.GetKeyDown(KeyCode.Mouse0))
 		{

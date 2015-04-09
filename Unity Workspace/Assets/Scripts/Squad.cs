@@ -14,13 +14,15 @@ public class Squad : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		gameObject.name = "Squad";
+	
 		// Spawn squad members
 		for (int i = 0; i < Environment.Instance.PlayersPerTeam; i++)
 		{
 			AIPlayer member = ((GameObject) GameObject.Instantiate(Environment.Instance.AIPlayerPrefab,
 								   					   			   (Vector2) transform.position + Vector2.right * i,	// TODO more graceful spawn position?
 								   					   			   Quaternion.identity)).GetComponent<AIPlayer>();
-			member.transform.parent = transform;
+			member.transform.parent = transform.parent;
 			members.Add(member);
 		}
 		
@@ -33,18 +35,21 @@ public class Squad : MonoBehaviour
 	void Update () 
 	{
 		currentState();
-		
-		MoveTowardsObjective();
 	}	
+	
+	void FixedUpdate()
+	{
+		MoveTowardsObjective();
+	}
 	
 	private bool IsAtObjective()
 	{
-		return transform.position.Equals(objective);
+		return ((Vector2)transform.position).Equals(objective);
 	}
 	
 	private void MoveTowardsObjective()
 	{
-		transform.position += (Vector3) ((objective - (Vector2)transform.position).normalized * Environment.Instance.PlayerMaxSpeed);
+		transform.position = Vector2.MoveTowards(transform.position, objective, Environment.Instance.PlayerMaxSpeed);
 	}
 	
 	// TODO Could be cool if multiple enemies
