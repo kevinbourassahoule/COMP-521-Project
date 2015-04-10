@@ -18,8 +18,10 @@ public class Environment : MonoBehaviour
 	public float		PlayerMaxHealth;
 	public float		PlayerMaxSpeed;
 	public float        PlayerMaxSight;
+	public float        PlayerShootWaitTime;
+
 	[Range(0,360)] public float	PlayerFOVAngle;
-	
+	[Range(0,360)] public float	PlayerSHOOTAngle;
 	// Prefabs
 	public GameObject	HumanPlayerPrefab;
 	public GameObject	SquadPrefab;
@@ -43,10 +45,13 @@ public class Environment : MonoBehaviour
 		Width  = transform.FindChild("Map/Floor").GetComponent<Renderer>().bounds.size.x;
 		*/
 		Height = transform.FindChild("Map/TopLeft").position.y - transform.FindChild("Map/BotLeft").position.y; 
-		Width = transform.FindChild("Map/BotRight").position.x - transform.FindChild("Map/BotLeft").position.x;
+		Width  = transform.FindChild("Map/BotRight").position.x - transform.FindChild("Map/BotLeft").position.x;
 		Walls  = transform.FindChild("Map/Walls").GetComponentsInChildren<Wall>();
-		PlayerFOVAngle = 60.0f;
-		PlayerMaxSight = 2.5f;
+		PlayerFOVAngle      = 120.0f;
+		PlayerSHOOTAngle    = 30.0f;
+		PlayerMaxSight      = 3.5f;
+		PlayerShootWaitTime = .25f;
+		BulletSpeed         = .05f;
 		// Spawn players 
 		// FIXME 1v1 for now...
 		switch (Type)
@@ -57,7 +62,7 @@ public class Environment : MonoBehaviour
 				// Spawn human player
 				team = new GameObject("Team0");
 				team.transform.parent = transform.FindChild("Teams");
-			GameObject human = (GameObject) GameObject.Instantiate(HumanPlayerPrefab, new Vector2(Width*.1f, Height*.1f), Quaternion.identity);
+				GameObject human = (GameObject) GameObject.Instantiate(HumanPlayerPrefab, new Vector2(Width*.1f, Height*.1f), Quaternion.identity);
 				human.transform.parent = team.transform;
 				
 				// Spawn enemy squads

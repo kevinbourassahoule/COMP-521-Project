@@ -5,6 +5,7 @@ public class Bullet : MonoBehaviour
 {
 	private float speed;
 	private Vector3 direction;
+	public Transform firer;
 	// Use this for initialization
 	void Start () 
 	{
@@ -22,26 +23,25 @@ public class Bullet : MonoBehaviour
 	void OnCollisionEnter2D(Collision2D coll) 
 	{
 		// Perform action on collided object
-		switch (coll.gameObject.tag)
-		{
+		if (coll.transform != null) {
+			switch (coll.gameObject.tag) {
 			case "Wall":
-				GameObject.Destroy(gameObject);
+				GameObject.Destroy (gameObject);
 				break;
 			case "Player":
-				//turn off friendly fire
-				if(transform.parent.parent != coll.transform.parent)
-				{
-					coll.gameObject.GetComponent<AbstractPlayer>().OnReceivedBullet();
+					//turn off friendly fire
+				if (firer.parent != coll.transform.parent) {
+					coll.gameObject.GetComponent<AbstractPlayer> ().OnReceivedBullet ();
 				}
 				break;
 			case "HumanPlayer":
-				if(transform.parent.parent != coll.transform.parent)
-				{
-					coll.gameObject.GetComponent<AbstractPlayer>().OnReceivedBullet();
+				if (firer.parent != coll.transform.parent) {
+					coll.gameObject.GetComponent<AbstractPlayer> ().OnReceivedBullet ();
 				}
 				break;
 			default:
 				break;
+			}
 		}
 	}
 }

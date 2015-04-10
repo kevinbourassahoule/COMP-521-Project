@@ -12,6 +12,10 @@ public class AIPlayer : AbstractPlayer
 	private bool targetInSight;
 
 	public Vector2 lastSeenPositionFromSquad; 
+
+	private float AngleBetweenPlayerAndTarget;
+
+	private float shootTimer;
 	// Use this for initialization
 	void Start () 
 	{
@@ -32,7 +36,11 @@ public class AIPlayer : AbstractPlayer
 			if(!previouslyInSight){
 				squad.OnEnemyDetected(Target);
 			}
-			Shoot ();
+			if(AngleBetweenPlayerAndTarget < Environment.Instance.PlayerSHOOTAngle && Time.time - shootTimer > Environment.Instance.PlayerShootWaitTime)
+			{
+				Shoot ();
+				shootTimer = Time.time;
+			}
 		}
 		else if(previouslyInSight)
 		{
@@ -49,16 +57,17 @@ public class AIPlayer : AbstractPlayer
 		if(Target != null)
 		{
 			Debug.DrawLine(transform.position, transform.position + (Target.transform.position - transform.position).normalized * Environment.Instance.PlayerMaxSight);
-			if (Vector3.Angle(transform.right, Target.transform.position - transform.position) > Environment.Instance.PlayerFOVAngle)
+			AngleBetweenPlayerAndTarget = Vector3.Angle(transform.right, Target.transform.position - transform.position);
+			if (AngleBetweenPlayerAndTarget > Environment.Instance.PlayerFOVAngle)
 			{
+
 				return false;
 			}
 
 			// Send a ray in the direction of the target 
 			Vector2 direction = (Target.transform.position - transform.position).normalized;
 			RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + 0.2f*direction,
-			                                     direction,Environment.Instance.PlayerMaxSight/*,
-			                                     LayerMask.GetMask("Player")*/);
+			                                     direction,Environment.Instance.PlayerMaxSight);
 
 			// Check if the ray hit the target
 			if (hit.collider != null && hit.transform == Target.transform)
@@ -116,7 +125,7 @@ public class AIPlayer : AbstractPlayer
 			}
 		}
 		//need to consider cover points if attacking
-		if(squad.IsAttacking() || squad.IsGoingToLastSeenPosition())
+		if(squad.IsAttacking())
 		{
 			Vector2 attackPlayerForce = (lastSeenPositionFromSquad - (Vector2)transform.position).normalized / 
 											Vector2.Distance (lastSeenPositionFromSquad,(Vector2) transform.position);

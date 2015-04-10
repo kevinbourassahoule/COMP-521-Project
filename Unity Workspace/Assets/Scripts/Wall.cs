@@ -7,8 +7,8 @@ public class Wall : MonoBehaviour {
 	public Vector2 botRight;
 	public Vector2 topLeft;
 	public Vector2 topRight;
-	private Vector2 coverLeftPoint;
-	private Vector2 coverRightPoint;
+	public Vector2 coverLeftPoint;
+	public Vector2 coverRightPoint;
 	// Use this for initialization
 	void Start () {
 		Quaternion angle = Quaternion.Euler (transform.eulerAngles);
