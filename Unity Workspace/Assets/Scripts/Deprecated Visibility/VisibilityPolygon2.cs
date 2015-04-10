@@ -92,7 +92,7 @@ public class VisibilityPolygon2
 		meshVertices.Sort(angleComparer);
 		
 		// Add player current position as point
-		meshVertices.Insert(0, new VisibilityHit(currPlayerPosition));
+		meshVertices.Insert(0, new VisibilityHit(currPlayerPosition)); // Fucking inefficient but wtv
 		
 		// Create array of triangle indeces
 		int[] meshTriangles = new int[(meshVertices.Count - 2) * 3];
@@ -110,6 +110,10 @@ public class VisibilityPolygon2
 		meshFilter.mesh.RecalculateNormals();	// TODO optimize?
 	}
 	
+	/*********************************************
+	 * HELPERS
+	 *********************************************/
+	
 	struct VisibilityHit
 	{
 		public VisibilityHit(Vector3 point, bool isLeftEndpoint = false, bool isRightEndpoint = false)
@@ -120,8 +124,8 @@ public class VisibilityPolygon2
 		}
 	
 		public Vector3 point;
-		public bool isLeftEndpoint;
-		public bool isRightEndpoint;
+		public bool    isLeftEndpoint;
+		public bool    isRightEndpoint;
 	}
 	
 	private static Vector3 VisibilityHitToVector3(VisibilityHit hit)

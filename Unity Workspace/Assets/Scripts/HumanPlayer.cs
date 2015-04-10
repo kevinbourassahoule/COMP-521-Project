@@ -3,13 +3,13 @@ using System.Collections;
 
 public class HumanPlayer : AbstractPlayer
 {
-	private VisibilityPolygon2 vision;
+	private VisibilityComputer vision;
 	private const float ROT_SPEED = 180f;
 
 	// Use this for initialization
 	void Start () {		
 		health = Environment.Instance.PlayerMaxHealth;
-		vision = new VisibilityPolygon2(gameObject, GameObject.Find("Environment/Map/Walls").GetComponentsInChildren<PolygonCollider2D>());;
+		vision = new VisibilityComputer(transform.position, 10);;
 	}
 	
 	// Update is called once per frame
@@ -38,8 +38,9 @@ public class HumanPlayer : AbstractPlayer
 			
 		transform.position = Vector3.MoveTowards(transform.position, transform.position + direction, Environment.Instance.PlayerMaxSpeed);
 		
-
-		vision.RecomputeVision();
+		// Update vision
+		vision.Origin = transform.position;
+		vision.Compute();
 	}
 	public override void Die()
 	{
