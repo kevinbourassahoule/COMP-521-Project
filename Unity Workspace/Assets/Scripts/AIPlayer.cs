@@ -48,7 +48,7 @@ public class AIPlayer : AbstractPlayer
 		// Check whether the target is within this player's field of view
 		if(Target != null)
 		{
-			Debug.DrawRay(transform.position, Target.transform.position - transform.position);
+			Debug.DrawLine(transform.position, transform.position + (Target.transform.position - transform.position).normalized * Environment.Instance.PlayerMaxSight);
 			if (Vector3.Angle(transform.right, Target.transform.position - transform.position) > Environment.Instance.PlayerFOVAngle)
 			{
 				return false;
@@ -57,7 +57,7 @@ public class AIPlayer : AbstractPlayer
 			// Send a ray in the direction of the target 
 			Vector2 direction = (Target.transform.position - transform.position).normalized;
 			RaycastHit2D hit = Physics2D.Raycast((Vector2)transform.position + 0.2f*direction,
-			                                     direction/*,
+			                                     direction,Environment.Instance.PlayerMaxSight/*,
 			                                     LayerMask.GetMask("Player")*/);
 
 			// Check if the ray hit the target
@@ -82,7 +82,7 @@ public class AIPlayer : AbstractPlayer
 		Collider2D[] nearbyObjects = Physics2D.OverlapCircleAll(transform.position, OBJECT_INFLUENCE_DISTANCE);	// TODO layer mask?
 		
 		// Follow squad
-		movementForces += (Vector2)(squad.transform.position - transform.position);
+		currForce += (Vector2)(squad.transform.position - transform.position);
 		float closestCoverDistance    = Mathf.Infinity;
 		Vector2 closestCover          = Vector2.zero;
 		foreach (Collider2D coll in nearbyObjects) {
@@ -120,28 +120,31 @@ public class AIPlayer : AbstractPlayer
 		{
 			Vector2 attackPlayerForce = (lastSeenPositionFromSquad - (Vector2)transform.position).normalized / 
 											Vector2.Distance (lastSeenPositionFromSquad,(Vector2) transform.position);
+			//if there was no legitimate cover spot
 			if(closestCover == Vector2.zero)
 			{
-				currForce += attackPlayerForce;
+				movementForces += attackPlayerForce;
+				lookAtForces   += attackPlayerForce;
 				
 			}
 			else
 			{
 				Vector2 coverForce  = (closestCover - (Vector2)transform.position).normalized / 
 											Vector2.Distance (closestCover,(Vector2) transform.position);
-				currForce += coverForce + attackPlayerForce;
+				movementForces += coverForce + attackPlayerForce;
+				lookAtForces   = lookAtForces - coverForce +attackPlayerForce;
 			}
 		}
 
 		//add forces
 		movementForces += currForce;
-		//lookAtForces   += currForce;
+		lookAtForces   += currForce;
 
 		// Update position
 		transform.position = Vector3.MoveTowards(transform.position, transform.position + (Vector3) movementForces, Environment.Instance.PlayerMaxSpeed);
 		
 		// Update rotation
-		Vector3 moveDirection = (transform.position + (Vector3) movementForces) - transform.position;
+		Vector3 moveDirection = (transform.position + (Vector3) lookAtForces) - transform.position;
 		if (moveDirection != Vector3.zero)
 		{ 
 			transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg,Vector3.forward); 

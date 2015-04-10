@@ -4,17 +4,19 @@ using System.Collections;
 public class Bullet : MonoBehaviour 
 {
 	private float speed;
-
+	private Vector3 direction;
 	// Use this for initialization
 	void Start () 
 	{
 		//transform.parent = GameObject.Find("Environment/Bullets").transform;
+		direction = transform.right;
+
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
-		transform.position += transform.right * Environment.Instance.BulletSpeed;
+		transform.position += direction * Environment.Instance.BulletSpeed;
 	}
 	
 	void OnCollisionEnter2D(Collision2D coll) 

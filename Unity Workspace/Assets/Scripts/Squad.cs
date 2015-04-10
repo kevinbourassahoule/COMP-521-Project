@@ -10,7 +10,7 @@ public class Squad : MonoBehaviour
 	// A reference to the squad's current state
 	private delegate void State();
 	private State currentState;
-
+	private float timer;
 	// Use this for initialization
 	void Start () 
 	{
@@ -105,6 +105,7 @@ public class Squad : MonoBehaviour
 		if(enemiesInSight.Count == 0)
 		{
 			objective = lastSeenPosition;
+			timer = Time.time;
 			currentState = GoingToLastSeenPosition;
 			return;
 		}
@@ -121,7 +122,7 @@ public class Squad : MonoBehaviour
 			return;
 		}
 		//check to see if player is there
-		if(this.IsAtObjective())
+		if(this.IsAtObjective() && Time.time - timer >= 10.0f)
 		{
 			currentState = Patrolling;
 			return;

@@ -17,7 +17,7 @@ public class Environment : MonoBehaviour
 	public float 		BulletSpeed;
 	public float		PlayerMaxHealth;
 	public float		PlayerMaxSpeed;
-	
+	public float        PlayerMaxSight;
 	[Range(0,360)] public float	PlayerFOVAngle;
 	
 	// Prefabs
@@ -45,7 +45,8 @@ public class Environment : MonoBehaviour
 		Height = transform.FindChild("Map/TopLeft").position.y - transform.FindChild("Map/BotLeft").position.y; 
 		Width = transform.FindChild("Map/BotRight").position.x - transform.FindChild("Map/BotLeft").position.x;
 		Walls  = transform.FindChild("Map/Walls").GetComponentsInChildren<Wall>();
-		PlayerFOVAngle = 180.0f;
+		PlayerFOVAngle = 60.0f;
+		PlayerMaxSight = 2.5f;
 		// Spawn players 
 		// FIXME 1v1 for now...
 		switch (Type)
