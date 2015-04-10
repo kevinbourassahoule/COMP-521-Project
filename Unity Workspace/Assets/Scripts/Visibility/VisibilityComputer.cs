@@ -297,8 +297,9 @@ public class VisibilityComputer
 		for (int i = 0; i < meshVertices.Count - 2; i++)
 		{
 			meshTriangles.Add(0);
-			meshTriangles.Add(i + 1);
 			meshTriangles.Add(i + 2);
+			meshTriangles.Add(i + 1);
+
 			Debug.DrawLine(meshVertices[0], meshVertices[i+1]);
 			Debug.DrawLine(meshVertices[0], meshVertices[i+2]);
 			Debug.DrawLine(meshVertices[i+1], meshVertices[i+2]);
@@ -311,7 +312,12 @@ public class VisibilityComputer
 		}).ToArray();
 		meshFilter.mesh.triangles = meshTriangles.ToArray();
 		/********************************************/
-		
+		List<Vector3> normals = new List<Vector3> ();
+		for (int i = 0; i < meshVertices.Count; i++)
+		{
+			normals.Add (Vector3.forward);
+		}
+		meshFilter.mesh.normals = normals.ToArray ();
 		return output;
 	}       
 	
