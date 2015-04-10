@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using System.Linq;
 public class VisibilityPolygon 
 {
 	private Vector3 viewPosition;
@@ -18,14 +18,9 @@ public class VisibilityPolygon
 			wallPoints.Add(new KeyValuePair<Vector2, float>(wb.topLeft,Mathf.Atan2(wb.topLeft.y - player.y,wb.topLeft.x - player.x)));
 			wallPoints.Add(new KeyValuePair<Vector2, float>(wb.topRight,Mathf.Atan2(wb.topRight.y - player.y,wb.topRight.x - player.x)));
 		}
-		//sorts the list by value counterclockwise
-		wallPoints.Sort ((firstPair,nextPair) =>
-		{
-			return firstPair.Value.CompareTo (nextPair.Value);
-		}
-		);
-		return wallPoints;
 
+		wallPoints = wallPoints.OrderBy (DictionaryEntry => DictionaryEntry.Value).ToList();
+		return wallPoints;
 	}
 
 	public VisibilityPolygon(AbstractPlayer player, Wall[] walls)
@@ -69,14 +64,16 @@ public class VisibilityPolygon
 					//calculate angle from player to our raycast hit
 					float hitAngle       = 0.0f;
 					//if the wall is to the left of our player, compare the angles relative to up
-					if(Hit.collider.transform.position.x - viewPosition.x <=0){
+					/*if(Hit.collider.transform.position.x - viewPosition.x <=0){
 						transformAngle = Vector2.Angle(Vector2.up,(Vector2)Hit.collider.transform.position - (Vector2)viewPosition);
 						hitAngle       = Vector2.Angle(Vector2.up,Hit.point - (Vector2)viewPosition);
 					//otherwise the wall is to the right so compare to down
 					}else{
 						transformAngle = Vector2.Angle(-Vector2.up,(Vector2)Hit.collider.transform.position - (Vector2)viewPosition);
 						hitAngle       = Vector2.Angle(-Vector2.up,Hit.point - (Vector2)viewPosition);
-					}
+					}*/
+					transformAngle = Mathf.Atan2(Hit.collider.transform.position.y - viewPosition.y,Hit.collider.transform.position.x - viewPosition.x);
+					hitAngle       = Mathf.Atan2(Hit.point.y - viewPosition.y,Hit.point.x - viewPosition.x);
 					if(transformAngle >= hitAngle){
 						hitPoints.Add (nextHit.point);
 						hitPoints.Add (Hit.point);
