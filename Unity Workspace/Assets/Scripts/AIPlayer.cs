@@ -16,35 +16,53 @@ public class AIPlayer : AbstractPlayer
 	private float AngleBetweenPlayerAndTarget;
 
 	private float shootTimer;
+
+	private SpriteRenderer spriteRenderer;
+
 	// Use this for initialization
 	void Start () 
 	{
 		health = Environment.Instance.PlayerMaxHealth;
 		squad = transform.parent.FindChild("Squad").GetComponent<Squad>();
 		targetInSight = false;
+		spriteRenderer = GetComponent<SpriteRenderer> ();
 	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
+		//get position from squad
 		lastSeenPositionFromSquad = squad.lastSeenPosition;
 		ApplyForces();
+		//keep track of if we saw the player last frame
 		bool previouslyInSight = targetInSight;
+		//do we see him now?
 		targetInSight = SeesTarget ();
 		if(targetInSight)
 		{
 			if(!previouslyInSight){
+				//alert the squad of us now being in sight of the enemy
 				squad.OnEnemyDetected(Target);
 			}
 			if(AngleBetweenPlayerAndTarget < Environment.Instance.PlayerSHOOTAngle && Time.time - shootTimer > Environment.Instance.PlayerShootWaitTime)
 			{
+				//shoot only if we see the enemy are within shooting angle range and havent shot too recently
 				Shoot ();
 				shootTimer = Time.time;
 			}
 		}
 		else if(previouslyInSight)
 		{
+			//if we saw the enemy last frame and now lost him, let the squad know
 			squad.OnLostSightOfEnemy(Target);
+		}
+		//if we arent in the players Visibility Polygon dont render 
+		if(WithinBounds(Environment.Instance.MeshVertices))
+		{
+			spriteRenderer.enabled = true;
+		}
+		else {
+			spriteRenderer.enabled = false;
 		}
 	}
 	

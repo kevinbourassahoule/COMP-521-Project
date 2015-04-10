@@ -32,6 +32,10 @@ public class Environment : MonoBehaviour
 	public static float  Height { get; private set; }
 	public static float  Width  { get; private set; }
 	public static Wall[] Walls  { get; private set; }
+
+	// Mesh vertices
+	private MeshFilter VisibilityPolygonMeshFilter;
+	public Vector3[] MeshVertices { get; set; }
 	
 	// Singleton instance of environment
 	public static Environment Instance { get; private set; }
@@ -47,6 +51,8 @@ public class Environment : MonoBehaviour
 		Height = transform.FindChild("Map/TopLeft").position.y - transform.FindChild("Map/BotLeft").position.y; 
 		Width  = transform.FindChild("Map/BotRight").position.x - transform.FindChild("Map/BotLeft").position.x;
 		Walls  = transform.FindChild("Map/Walls").GetComponentsInChildren<Wall>();
+		VisibilityPolygonMeshFilter = transform.FindChild ("VisibilityPolygon").GetComponent<MeshFilter> ();
+		MeshVertices = VisibilityPolygonMeshFilter.mesh.vertices;
 		PlayerFOVAngle      = 120.0f;
 		PlayerSHOOTAngle    = 30.0f;
 		PlayerMaxSight      = 3.5f;
@@ -77,5 +83,9 @@ public class Environment : MonoBehaviour
 				
 				break;
 		}
+	}
+	void Update()
+	{
+		MeshVertices = VisibilityPolygonMeshFilter.mesh.vertices;
 	}
 }

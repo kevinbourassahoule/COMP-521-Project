@@ -304,7 +304,6 @@ public class VisibilityComputer
 			Debug.DrawLine(meshVertices[0], meshVertices[i+2]);
 			Debug.DrawLine(meshVertices[i+1], meshVertices[i+2]);
 		}
-		
 		meshFilter.mesh.Clear();
 		meshFilter.mesh.vertices = meshVertices.ConvertAll<Vector3>(delegate(Vector2 input) 
 		{

@@ -9,7 +9,9 @@ public class HumanPlayer : AbstractPlayer
 	// Use this for initialization
 	void Start () {		
 		health = Environment.Instance.PlayerMaxHealth;
-		vision = new VisibilityComputer(transform.position, 10);;
+		vision = new VisibilityComputer(transform.position, 10);
+		//tell the environment about the mesh.
+		//Environment.Instance.MeshVertices = vision.Triangles;
 	}
 	
 	// Update is called once per frame
