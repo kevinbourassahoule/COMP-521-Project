@@ -78,14 +78,13 @@ public class AIPlayer : AbstractPlayer
 		Vector2 lookAtForces   = Vector2.zero;
 		Vector2 movementForces = Vector2.zero;
 		Vector2 currForce      = Vector2.zero;
-		Vector2 currMovementForce = Vector2.zero;
-		Vector2 currLookAtForce = Vector2.zero;
+
 		Collider2D[] nearbyObjects = Physics2D.OverlapCircleAll(transform.position, OBJECT_INFLUENCE_DISTANCE);	// TODO layer mask?
 		
 		// Follow squad
 		movementForces += (Vector2)(squad.transform.position - transform.position);
-		float closestCoverDistance = float.MaxValue;
-		Wall closestCover          = null;
+		float closestCoverDistance    = Mathf.Infinity;
+		Vector2 closestCover          = Vector2.zero;
 		foreach (Collider2D coll in nearbyObjects) {
 			if (coll.tag == "Player" && !coll.gameObject.Equals (gameObject)) {
 				currForce -= (Vector2)(coll.transform.position - transform.position).normalized / 
@@ -94,11 +93,25 @@ public class AIPlayer : AbstractPlayer
 			//if theres a wall near us and were attacking find the closest cover point
 			if(coll.tag == "Wall" && (squad.IsAttacking() || squad.IsGoingToLastSeenPosition()))
 			{
-				float curCoverDistance = Vector3.Distance(coll.transform.position,transform.position);
-				if(curCoverDistance < closestCoverDistance)
+				//check if wall has a good cover point
+				Wall curWall        = coll.transform.GetComponent<Wall>();
+				//we need it to be the closer of the two wall covers. Otherwise well get stuck
+				Vector2 coverChoice = (Vector2.Distance(curWall.coverLeftPoint,transform.position) < 
+				                       Vector2.Distance(curWall.coverRightPoint,transform.position)) 
+											? curWall.coverLeftPoint : curWall.coverRightPoint;
+				//we also need that the distance from the enemy to the wall transform is less than the distance from the enemy to our cover
+				coverChoice         = (Vector2.Distance(coverChoice,lastSeenPositionFromSquad) > 
+				                       Vector2.Distance(coll.transform.position,lastSeenPositionFromSquad)) 
+											? coverChoice : Vector2.zero;
+				//if its closer then then previous min update
+				if(coverChoice != Vector2.zero)
 				{
-					closestCoverDistance = curCoverDistance;
-					closestCover         = coll.transform.GetComponent<Wall>();
+					float curCoverDistance = Vector3.Distance(coverChoice,transform.position);
+					if(curCoverDistance < closestCoverDistance)
+					{
+						closestCoverDistance = curCoverDistance;
+						closestCover         = coverChoice;
+					}
 				}
 			}
 		}
@@ -107,19 +120,15 @@ public class AIPlayer : AbstractPlayer
 		{
 			Vector2 attackPlayerForce = (lastSeenPositionFromSquad - (Vector2)transform.position).normalized / 
 											Vector2.Distance (lastSeenPositionFromSquad,(Vector2) transform.position);
-			if(closestCover == null)
+			if(closestCover == Vector2.zero)
 			{
 				currForce += attackPlayerForce;
 				
 			}
 			else
 			{
-				//TODO this could be wrong, may have to optimize, pick further cover between the two
-				Vector2 coverChoice = (Vector2.Distance(closestCover.coverLeftPoint,lastSeenPositionFromSquad) > 
-				                          Vector2.Distance(closestCover.coverRightPoint,lastSeenPositionFromSquad)) 
-												? closestCover.coverLeftPoint : closestCover.coverRightPoint;
-				Vector2 coverForce  = (coverChoice - (Vector2)transform.position).normalized / 
-											Vector2.Distance (coverChoice,(Vector2) transform.position);
+				Vector2 coverForce  = (closestCover - (Vector2)transform.position).normalized / 
+											Vector2.Distance (closestCover,(Vector2) transform.position);
 				currForce += coverForce + attackPlayerForce;
 			}
 		}
