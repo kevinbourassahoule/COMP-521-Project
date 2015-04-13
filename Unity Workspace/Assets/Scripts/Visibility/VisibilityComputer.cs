@@ -16,7 +16,7 @@ public class VisibilityComputer
 	// The visibility polygon
 	private MeshFilter meshFilter;
 	
-	// The map elements       
+	// The map elements
 	private List<EndPoint> endpoints;
 	private List<Segment> segments;
 	

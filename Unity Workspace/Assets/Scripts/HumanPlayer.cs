@@ -43,8 +43,11 @@ public class HumanPlayer : AbstractPlayer
 		vision.Origin = transform.position;
 		vision.Compute();
 	}
+	
 	public override void Die()
 	{
 		GameObject.Destroy(gameObject);
 	}
+	
+	public override void OnKilledEnemy(AbstractPlayer deadPlayer) {}
 }

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 public class AIPlayer : AbstractPlayer 
 {	
 	public AbstractPlayer Target { get; set; }
-	public Vector2 lastSeenPositionFromSquad; 
 
 	private Squad squad;
 	private bool targetInSight;
@@ -26,8 +25,6 @@ public class AIPlayer : AbstractPlayer
 	// Update is called once per frame
 	void Update () 
 	{
-		//get position from squad
-		lastSeenPositionFromSquad = squad.lastSeenPosition;
 		ApplyForces();
 		//keep track of if we saw the player last frame
 		bool previouslyInSight = targetInSight;
@@ -46,19 +43,24 @@ public class AIPlayer : AbstractPlayer
 				shootTimer = Time.time;
 			}
 		}
-		else if(previouslyInSight)
+		else if (previouslyInSight)
 		{
 			//if we saw the enemy last frame and now lost him, let the squad know
 			squad.OnLostSightOfEnemy(Target);
 		}
 		//if we arent in the players Visibility Polygon dont render 
-		if(WithinBounds(Environment.Instance.MeshVertices))
+		if (WithinBounds(Environment.Instance.MeshVertices))
 		{
 			spriteRenderer.enabled = true;
 		}
 		else {
 			spriteRenderer.enabled = false;
 		}
+	}
+	
+	public override void OnKilledEnemy(AbstractPlayer deadPlayer)
+	{
+		squad.OnKilledEnemy(deadPlayer);
 	}
 	
 	/*
@@ -69,7 +71,9 @@ public class AIPlayer : AbstractPlayer
 		// Check whether the target is within this player's field of view
 		if(Target != null)
 		{
-			Debug.DrawLine(transform.position, transform.position + (Target.transform.position - transform.position).normalized * Environment.Instance.PlayerMaxSight);
+			// Draw a line towards target for testing purposes
+//			Debug.DrawLine(transform.position, transform.position + (Target.transform.position - transform.position).normalized * Environment.Instance.PlayerMaxSight);
+			
 			AngleBetweenPlayerAndTarget = Vector3.Angle(transform.right, Target.transform.position - transform.position);
 			if (AngleBetweenPlayerAndTarget > Environment.Instance.PlayerFOVAngle)
 			{
@@ -97,95 +101,161 @@ public class AIPlayer : AbstractPlayer
 	
 	private void ApplyForces()
 	{
-		Vector2 lookAtForces   = Vector2.zero;
-		Vector2 movementForces = Vector2.zero;
-		Vector2 currForce      = Vector2.zero;
-
-		Collider2D[] nearbyObjects = Physics2D.OverlapCircleAll(transform.position, OBJECT_INFLUENCE_DISTANCE);	// TODO layer mask?
+		// Forces
+		Vector2 lookAtForces        = (Vector2)(squad.transform.position - transform.position);
+		Vector2 movementForces      = (Vector2)(squad.transform.position - transform.position);
 		
-		// Follow squad
-		currForce += (Vector2)(squad.transform.position - transform.position);
-		float closestCoverDistance    = Mathf.Infinity;
-		Vector2 closestCover          = Vector2.zero;
-		foreach (Collider2D coll in nearbyObjects) {
-			if (coll.tag == "Player" && !coll.gameObject.Equals (gameObject)) {
-				currForce -= (Vector2)(coll.transform.position - transform.position).normalized / 
-					Vector3.Distance (coll.transform.position, transform.position);
-			}
-			//if theres a wall near us and were attacking find the closest cover point
-			if(coll.tag == "Wall" && (squad.IsAttacking() || squad.IsGoingToLastSeenPosition()))
+		Vector2 nearbyWallForce     = Vector2.zero;
+		int     nearbyWallCount     = 0;
+		Vector2 nearbyAIForce       = Vector2.zero;
+		int     nearbyAICount       = 0;
+		Vector2 nearbyCoverForce    = Vector2.zero;
+		
+		Wall	nearestWall         = null;
+		float	nearestWallDistance = Mathf.Infinity;
+		
+		// Get all nearby objects
+		Collider2D[] nearbyObjects = Physics2D.OverlapCircleAll(transform.position, OBJECT_INFLUENCE_DISTANCE);
+		
+		// Handle force influence for each nearby object
+		foreach (Collider2D coll in nearbyObjects) 
+		{
+			// Handle nearby AIPlayer
+			if (coll.CompareTag("AIPlayer")
+			 && !coll.gameObject.Equals(gameObject)) 
 			{
-				//check if wall has a good cover point
-				Wall curWall        = coll.transform.GetComponent<Wall>();
-				//we need it to be the closer of the two wall covers. Otherwise well get stuck
-				Vector2 coverChoice = (Vector2.Distance(curWall.coverLeftPoint,transform.position) < 
-				                       Vector2.Distance(curWall.coverRightPoint,transform.position)) 
-											? curWall.coverLeftPoint : curWall.coverRightPoint;
-				//we also need that the distance from the enemy to the wall transform is less than the distance from the enemy to our cover
-				coverChoice         = (Vector2.Distance(coverChoice,lastSeenPositionFromSquad) > 
-				                       Vector2.Distance(coll.transform.position,lastSeenPositionFromSquad)) 
-											? coverChoice : Vector2.zero;
-				//if its closer then then previous min update
-				if(coverChoice != Vector2.zero)
+				nearbyAIForce += (Vector2)(coll.transform.position - transform.position).normalized
+					            / Vector3.Distance(coll.transform.position, transform.position);
+				nearbyAICount++;
+			}
+			
+			// Handle nearby wall
+			if (coll.CompareTag("Wall"))
+			{
+				Wall currWall = coll.GetComponent<Wall>();
+				Vector3 closestWallPoint = coll.GetComponent<PolygonCollider2D>().bounds.ClosestPoint(transform.position);
+				
+				nearbyWallForce += (Vector2)(closestWallPoint - transform.position).normalized 
+					              / Vector3.Distance(transform.position, closestWallPoint);
+				nearbyWallCount++;
+				
+				// Check if this is the nearest wall
+				float distanceToWall = Vector2.Distance(currWall.transform.position, transform.position);
+				if (distanceToWall < nearestWallDistance)
 				{
-					float curCoverDistance = Vector3.Distance(coverChoice,transform.position);
-					if(curCoverDistance < closestCoverDistance)
-					{
-						closestCoverDistance = curCoverDistance;
-						closestCover         = coverChoice;
-					}
+					nearestWall = currWall;
+					nearestWallDistance = distanceToWall;
 				}
 			}
+			
+//			// If theres a wall near us and were attacking find the closest cover point
+//			if(coll.tag == "Wall" && (squad.IsAttacking() || squad.IsGoingToLastSeenPosition()))
+//			{
+//				//check if wall has a good cover point
+//				Wall curWall        = coll.transform.GetComponent<Wall>();
+//				//we need it to be the closer of the two wall covers. Otherwise well get stuck
+//				Vector2 coverChoice = (Vector2.Distance(curWall.coverLeftPoint,transform.position) < 
+//				                       Vector2.Distance(curWall.coverRightPoint,transform.position)) 
+//											? curWall.coverLeftPoint : curWall.coverRightPoint;
+//				//we also need that the distance from the enemy to the wall transform is less than the distance from the enemy to our cover
+//				coverChoice         = (Vector2.Distance(coverChoice,lastSeenPositionFromSquad) > 
+//				                       Vector2.Distance(coll.transform.position,lastSeenPositionFromSquad)) 
+//											? coverChoice : Vector2.zero;
+//				//if its closer then then previous min update
+//				if(coverChoice != Vector2.zero)
+//				{
+//					float curCoverDistance = Vector3.Distance(coverChoice,transform.position);
+//					if(curCoverDistance < closestCoverDistance)
+//					{
+//						closestCoverDistance = curCoverDistance;
+//						closestCover         = coverChoice;
+//					}
+//				}
+//			}
 		}
 		//need to consider cover points if attacking
-		if(squad.IsAttacking())
+//		if(squad.IsAttacking())
+//		{
+//			Vector2 attackPlayerForce = (lastSeenPositionFromSquad - (Vector2)transform.position).normalized / 
+//											Vector2.Distance (lastSeenPositionFromSquad,(Vector2) transform.position);
+//			//if there was no legitimate cover spot
+//			if(closestCover == Vector2.zero)
+//			{
+//				movementForces += attackPlayerForce;
+//				lookAtForces   += attackPlayerForce;
+//				
+//			}
+//			else
+//			{
+//				Vector2 coverForce  = (closestCover - (Vector2)transform.position).normalized / 
+//											Vector2.Distance (closestCover,(Vector2) transform.position);
+//				movementForces += coverForce + attackPlayerForce;
+//				lookAtForces   = lookAtForces - coverForce +attackPlayerForce;
+//			}
+//		}
+
+		// Get nearest cover point from nearest wall and generate a force from its position
+		if (Vector2.Distance(nearestWall.coverLeftPoint, transform.position) < 
+		    Vector2.Distance(nearestWall.coverRightPoint, transform.position)) 
 		{
-			Vector2 attackPlayerForce = (lastSeenPositionFromSquad - (Vector2)transform.position).normalized / 
-											Vector2.Distance (lastSeenPositionFromSquad,(Vector2) transform.position);
-			//if there was no legitimate cover spot
-			if(closestCover == Vector2.zero)
+			nearbyCoverForce = nearestWall.coverLeftPoint - (Vector2) transform.position;
+		}
+		else {
+			nearbyCoverForce = nearestWall.coverRightPoint - (Vector2) transform.position;
+		}
+		if (squad.IsAttacking() || squad.IsGoingToLastSeenPosition())
+		{
+			movementForces += nearbyCoverForce;
+		}
+		
+		// Accumulate forces from walls
+		if (nearbyWallCount > 0) 
+		{
+			movementForces -= nearbyWallForce / nearbyWallCount;
+//			lookAtForces   += nearbyWallForce / nearbyWallCount;
+		}
+		
+		// Accumulate forces from nearby AI
+		if (nearbyAICount > 0)
+		{
+			movementForces -= nearbyAIForce / nearbyAICount;
+			
+			if (squad.IsPatrolling())
 			{
-				movementForces += attackPlayerForce;
-				lookAtForces   += attackPlayerForce;
-				
-			}
-			else
-			{
-				Vector2 coverForce  = (closestCover - (Vector2)transform.position).normalized / 
-											Vector2.Distance (closestCover,(Vector2) transform.position);
-				movementForces += coverForce + attackPlayerForce;
-				lookAtForces   = lookAtForces - coverForce +attackPlayerForce;
+				lookAtForces -= nearbyAIForce / nearbyAICount;
 			}
 		}
-
-		//add forces
-		movementForces += currForce;
-		lookAtForces   += currForce;
+		
+		if (!Target.IsDead())
+		{
+			if (squad.IsAttacking())
+			{
+				lookAtForces = Target.transform.position - transform.position;
+			}
+			else if (squad.IsGoingToLastSeenPosition())
+			{
+				lookAtForces = squad.lastSeenPosition - (Vector2) transform.position;
+			}
+		}
 
 		// Update position
 		transform.position = Vector3.MoveTowards(transform.position, transform.position + (Vector3) movementForces, Environment.Instance.PlayerMaxSpeed);
 		
 		// Update rotation
-		Vector3 moveDirection = (transform.position + (Vector3) lookAtForces) - transform.position;
-		if (moveDirection != Vector3.zero)
+		Vector3 lookAtVector = (transform.position + (Vector3) lookAtForces) - transform.position;
+		if (lookAtVector != Vector3.zero)
 		{ 
-			transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg,Vector3.forward); 
+			transform.rotation = Quaternion.AngleAxis(Mathf.Atan2(lookAtVector.y, lookAtVector.x) * Mathf.Rad2Deg, Vector3.forward); 
 		}
-
 	}
 
 	public override void Die()
 	{
-		if(targetInSight)
+		if (targetInSight)
 		{
 			squad.OnLostSightOfEnemy(Target);
 		}
+		
 		GameObject.Destroy(gameObject);
 	}
-	
-	// TODO Could be cool for squad decision-making
-//	private List<AbstractPlayer> EnemiesInSight()
-//	{
-//		
-//	}
 }

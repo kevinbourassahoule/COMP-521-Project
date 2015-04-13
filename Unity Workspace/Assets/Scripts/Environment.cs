@@ -85,6 +85,7 @@ public class Environment : MonoBehaviour
 				break;
 		}
 	}
+	
 	void Update()
 	{
 		MeshVertices = visibilityPolygonMeshFilter.mesh.vertices;

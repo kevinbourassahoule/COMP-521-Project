@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Bullet : MonoBehaviour 
 {
-	public Transform Firer;
+	public AbstractPlayer Firer;
 	
 	private float speed;
 	private Vector3 direction;
@@ -13,13 +13,20 @@ public class Bullet : MonoBehaviour
 	{
 		//transform.parent = GameObject.Find("Environment/Bullets").transform;
 		direction = transform.right;
-
 	}
 	
 	// Update is called once per frame
 	void FixedUpdate () 
 	{
 		transform.position += direction * Environment.Instance.BulletSpeed;
+		
+		if (Mathf.Abs(transform.position.x) < 0 || 
+		    Mathf.Abs(transform.position.x) > Environment.Width ||
+		    Mathf.Abs(transform.position.y) < 0 || 
+		    Mathf.Abs(transform.position.y) > Environment.Width)
+		{
+			GameObject.Destroy(gameObject);
+		}
 	}
 	
 	void OnCollisionEnter2D(Collision2D coll) 
@@ -34,14 +41,28 @@ public class Bullet : MonoBehaviour
 					break;
 				case "AIPlayer":
 				case "HumanPlayer":
+					AbstractPlayer playerHit = coll.gameObject.GetComponent<AbstractPlayer>();
+					
 					// No friendly fire
-					if (Firer.parent != coll.transform.parent) {
-						coll.gameObject.GetComponent<AbstractPlayer>().OnReceivedBullet ();
+					if (!Firer.transform.parent.Equals(playerHit.transform.parent))
+					{
+						playerHit.OnReceivedBullet ();
+						
+						if (playerHit.IsDead())
+						{
+							Firer.OnKilledEnemy(playerHit);
+						}
+						
+						// Destroy bullet
+						GameObject.Destroy(gameObject);
 					}
+					
 					break;
 				default:
 					break;
 			}
 		}
+		
+		
 	}
 }

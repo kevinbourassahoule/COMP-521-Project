@@ -27,7 +27,7 @@ public class Squad : MonoBehaviour
 								   					   			   (Vector2) transform.position + Vector2.right * i * .1f,	// TODO more graceful spawn position?
 								   					   			   Quaternion.identity)).GetComponent<AIPlayer>();
 			member.transform.parent = transform.parent;
-			member.Target = GameObject.FindGameObjectWithTag ("HumanPlayer").GetComponent<AbstractPlayer>();
+			member.Target = GameObject.FindGameObjectWithTag("HumanPlayer").GetComponent<AbstractPlayer>();
 			members.Add(member);
 		}
 		
@@ -136,7 +136,7 @@ public class Squad : MonoBehaviour
 	/************
 	 * CALLBACKS
 	 ************/
-	 
+	
 	public void OnEnemyDetected(AbstractPlayer enemy)
 	{
 		lastSeenPosition = (Vector2) enemy.transform.position;
@@ -157,5 +157,10 @@ public class Squad : MonoBehaviour
 		{
 			enemiesInSight.Remove(enemy);
 		}
+	}
+	
+	public void OnKilledEnemy(AbstractPlayer enemy)
+	{
+		currentState = Patrolling;
 	}
 }
