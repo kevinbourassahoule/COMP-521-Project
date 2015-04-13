@@ -3,9 +3,11 @@ using System.Collections;
 
 public class Bullet : MonoBehaviour 
 {
+	public Transform Firer;
+	
 	private float speed;
 	private Vector3 direction;
-	public Transform firer;
+	
 	// Use this for initialization
 	void Start () 
 	{
@@ -23,24 +25,22 @@ public class Bullet : MonoBehaviour
 	void OnCollisionEnter2D(Collision2D coll) 
 	{
 		// Perform action on collided object
-		if (coll.transform != null) {
-			switch (coll.gameObject.tag) {
-			case "Wall":
-				GameObject.Destroy (gameObject);
-				break;
-			case "Player":
-					//turn off friendly fire
-				if (firer.parent != coll.transform.parent) {
-					coll.gameObject.GetComponent<AbstractPlayer> ().OnReceivedBullet ();
-				}
-				break;
-			case "HumanPlayer":
-				if (firer.parent != coll.transform.parent) {
-					coll.gameObject.GetComponent<AbstractPlayer> ().OnReceivedBullet ();
-				}
-				break;
-			default:
-				break;
+		if (coll.transform != null) 
+		{
+			switch (coll.gameObject.tag) 
+			{
+				case "Wall":
+					GameObject.Destroy(gameObject);
+					break;
+				case "AIPlayer":
+				case "HumanPlayer":
+					// No friendly fire
+					if (Firer.parent != coll.transform.parent) {
+						coll.gameObject.GetComponent<AbstractPlayer>().OnReceivedBullet ();
+					}
+					break;
+				default:
+					break;
 			}
 		}
 	}

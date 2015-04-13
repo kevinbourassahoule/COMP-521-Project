@@ -1,16 +1,12 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 public class EndPoint
 {
 	public Vector2 Position { get; set; }
-	public bool    Begin { get; set; }
-	public Segment Segment { get; set; }
-	public float   Angle { get; set; }
+	public bool    Begin    { get; set; }
+	public Segment Segment  { get; set; }
+	public float   Angle    { get; set; }
 	
 	public EndPoint()
 	{
@@ -20,25 +16,26 @@ public class EndPoint
 		Angle = 0;
 	}
 	
-	public override bool Equals(object obj)
+	public bool IsLeftOf(EndPoint other, Vector2 point)
 	{
-		if(obj is EndPoint)
-		{
-			EndPoint other = (EndPoint)obj;
-			
-			return Position.Equals(other.Position) && Begin.Equals(other.Begin) && Angle.Equals(other.Angle);
-		}
+		float cross = (other.Position.x - this.Position.x) * (point.y - this.Position.y)
+			        - (other.Position.y - this.Position.y) * (point.x - this.Position.x);
 		
-		return false;
+		return cross < 0;
 	}
+}
+
+public class EndPointComparer : IComparer<EndPoint>
+{
+	public EndPointComparer() {}
 	
-	public override int GetHashCode()
+	public int Compare(EndPoint a, EndPoint b)
 	{
-		return Position.GetHashCode() + Begin.GetHashCode() + Angle.GetHashCode();
-	}
-	
-	public override string ToString()
-	{
-		return "{ p:" + Position.ToString() + "a: " + Angle + " in " + Segment.ToString() + "}";
+		if (a.Angle > b.Angle) { return 1; }
+		if (a.Angle < b.Angle) { return -1; }
+		if (!a.Begin && b.Begin) { return 1; }
+		if (a.Begin && !b.Begin) { return -1; }
+		
+		return 0;
 	}
 }

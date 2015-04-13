@@ -1,23 +1,18 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 public class AIPlayer : AbstractPlayer 
 {	
-	private const int OBJECT_INFLUENCE_DISTANCE = 5;
-
 	public AbstractPlayer Target { get; set; }
-	
-	private Squad squad;
-
-	private bool targetInSight;
-
 	public Vector2 lastSeenPositionFromSquad; 
 
+	private Squad squad;
+	private bool targetInSight;
 	private float AngleBetweenPlayerAndTarget;
-
 	private float shootTimer;
-
 	private SpriteRenderer spriteRenderer;
+
+	private const int OBJECT_INFLUENCE_DISTANCE = 5;
 
 	// Use this for initialization
 	void Start () 
@@ -44,7 +39,7 @@ public class AIPlayer : AbstractPlayer
 				//alert the squad of us now being in sight of the enemy
 				squad.OnEnemyDetected(Target);
 			}
-			if(AngleBetweenPlayerAndTarget < Environment.Instance.PlayerSHOOTAngle && Time.time - shootTimer > Environment.Instance.PlayerShootWaitTime)
+			if(AngleBetweenPlayerAndTarget < Environment.Instance.PlayerShootAngle && Time.time - shootTimer > Environment.Instance.PlayerShootWaitTime)
 			{
 				//shoot only if we see the enemy are within shooting angle range and havent shot too recently
 				Shoot ();

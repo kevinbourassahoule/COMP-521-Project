@@ -12,10 +12,10 @@ public abstract class AbstractPlayer : MonoBehaviour
 		GameObject bullet = (GameObject) GameObject.Instantiate(Environment.Instance.BulletPrefab,
 							  									transform.position + (transform.right)*.2f,
 							   									transform.rotation);
-							   									
+		
 		bullet.transform.parent = Environment.Instance.transform.FindChild("Bullets");
 		Bullet b = bullet.GetComponent<Bullet> ();
-		b.firer = transform;
+		b.Firer = transform;
 	}
 
 	// Called by a bullet when it hits this player
@@ -31,7 +31,7 @@ public abstract class AbstractPlayer : MonoBehaviour
 	
 	public abstract void Die ();
 	protected void killedPlayer (AbstractPlayer deadPlayer){}
-
+	
 	protected bool WithinBounds(Vector3[] triangularVertices)
 	{
 		Vector2 p  = (Vector2) transform.position;

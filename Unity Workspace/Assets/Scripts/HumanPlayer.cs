@@ -7,11 +7,10 @@ public class HumanPlayer : AbstractPlayer
 	private const float ROT_SPEED = 180f;
 
 	// Use this for initialization
-	void Start () {		
+	void Start () 
+	{		
 		health = Environment.Instance.PlayerMaxHealth;
-		vision = new VisibilityComputer(transform.position, 10);
-		//tell the environment about the mesh.
-		//Environment.Instance.MeshVertices = vision.Triangles;
+		vision = new VisibilityComputer(transform.position, Environment.Instance.PlayerMaxSight);
 	}
 	
 	// Update is called once per frame
@@ -37,7 +36,7 @@ public class HumanPlayer : AbstractPlayer
 			direction += Vector3.right;
 		if (Input.GetKey(KeyCode.A))
 			direction += -Vector3.right;
-			
+		
 		transform.position = Vector3.MoveTowards(transform.position, transform.position + direction, Environment.Instance.PlayerMaxSpeed);
 		
 		// Update vision

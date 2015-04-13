@@ -11,17 +11,18 @@ public enum GameType
 public class Environment : MonoBehaviour 
 {
 	// Environment properties to be defined in editor
-	public int 			EnemyTeamCount;
-	public int 			PlayersPerTeam;
-	public GameType 	Type;
-	public float 		BulletSpeed;
-	public float		PlayerMaxHealth;
-	public float		PlayerMaxSpeed;
-	public float        PlayerMaxSight;
-	public float        PlayerShootWaitTime;
+	public int 			EnemyTeamCount           = 1;
+	public int 			PlayersPerTeam           = 5;
+	public GameType 	GameType                 = GameType.PLAYER_VS_ENVIRONMENT;
+	public float 		BulletSpeed              = .05f;
+	public int		    PlayerMaxHealth          = 10;
+	public float		PlayerMaxSpeed           = .02f;
+	public float        PlayerMaxSight           = 3.5f;
+	public float        PlayerShootWaitTime      = .25f;
 
-	[Range(0,360)] public float	PlayerFOVAngle;
-	[Range(0,360)] public float	PlayerSHOOTAngle;
+	[Range(0,360)] public float	PlayerFOVAngle   = 120f;
+	[Range(0,360)] public float	PlayerShootAngle = 30f;
+	
 	// Prefabs
 	public GameObject	HumanPlayerPrefab;
 	public GameObject	SquadPrefab;
@@ -34,7 +35,7 @@ public class Environment : MonoBehaviour
 	public static Wall[] Walls  { get; private set; }
 
 	// Mesh vertices
-	private MeshFilter VisibilityPolygonMeshFilter;
+	private MeshFilter visibilityPolygonMeshFilter;
 	public Vector3[] MeshVertices { get; set; }
 	
 	// Singleton instance of environment
@@ -43,24 +44,24 @@ public class Environment : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		// Set singleton instance
 		Instance = GetComponent<Environment>();
 		
+		// Initialize map properties
 		/*Height = transform.FindChild("Map/Floor").GetComponent<Renderer>().bounds.size.y;
 		Width  = transform.FindChild("Map/Floor").GetComponent<Renderer>().bounds.size.x;
 		*/
 		Height = transform.FindChild("Map/TopLeft").position.y - transform.FindChild("Map/BotLeft").position.y; 
 		Width  = transform.FindChild("Map/BotRight").position.x - transform.FindChild("Map/BotLeft").position.x;
 		Walls  = transform.FindChild("Map/Walls").GetComponentsInChildren<Wall>();
-		VisibilityPolygonMeshFilter = transform.FindChild ("VisibilityPolygon").GetComponent<MeshFilter> ();
-		MeshVertices = VisibilityPolygonMeshFilter.mesh.vertices;
-		PlayerFOVAngle      = 120.0f;
-		PlayerSHOOTAngle    = 30.0f;
-		PlayerMaxSight      = 3.5f;
-		PlayerShootWaitTime = .25f;
-		BulletSpeed         = .05f;
+		
+		// Initialize mesh properties
+		visibilityPolygonMeshFilter = transform.FindChild ("VisibilityPolygon").GetComponent<MeshFilter> ();
+		MeshVertices = visibilityPolygonMeshFilter.mesh.vertices;
+		
 		// Spawn players 
 		// FIXME 1v1 for now...
-		switch (Type)
+		switch (GameType)
 		{
 			case GameType.PLAYER_VS_ENVIRONMENT:
 				GameObject team;
@@ -86,6 +87,6 @@ public class Environment : MonoBehaviour
 	}
 	void Update()
 	{
-		MeshVertices = VisibilityPolygonMeshFilter.mesh.vertices;
+		MeshVertices = visibilityPolygonMeshFilter.mesh.vertices;
 	}
 }

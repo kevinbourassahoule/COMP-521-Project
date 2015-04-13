@@ -7,11 +7,14 @@ public class Squad : MonoBehaviour
 	private List<AIPlayer> 				   members 		    = new List<AIPlayer>();
 	private Dictionary<AbstractPlayer,int> enemiesInSight 	= new Dictionary<AbstractPlayer,int>();
 	public  Vector2                        lastSeenPosition { get; set; }
+	
 	// A reference to the squad's current state
 	private delegate void State();
 	private State currentState;
+	
 	private float WaitInCoverTimer;
-	private float waitTime = 5.0f;
+	private const float WAIT_TIME = 5.0f;
+	
 	// Use this for initialization
 	void Start () 
 	{
@@ -46,7 +49,6 @@ public class Squad : MonoBehaviour
 	
 	private bool IsAtObjective()
 	{
-//		Debug.Log(transform.position + ", " + objective + ", " + ((Vector2)transform.position).Equals(objective));
 		return Vector2.Distance(transform.position, objective) < Vector2.kEpsilon;
 	}
 	
@@ -56,25 +58,25 @@ public class Squad : MonoBehaviour
 	}
 	
 	// TODO Could be cool if multiple enemies
-	private AIPlayer GetMemberClosestToTarget(AbstractPlayer target)
-	{
-		float closestDistance = Mathf.Infinity;
-		float currDistance;
-		AIPlayer closestMember = null;
-		
-		foreach (AIPlayer member in members)
-		{
-			currDistance = Vector2.Distance(member.transform.position, target.transform.position);
-			
-			if (currDistance < closestDistance)
-			{
-				closestDistance = currDistance;
-				closestMember = member;
-			}
-		}
-		
-		return closestMember;
-	}
+//	private AIPlayer GetMemberClosestToTarget(AbstractPlayer target)
+//	{
+//		float closestDistance = Mathf.Infinity;
+//		float currDistance;
+//		AIPlayer closestMember = null;
+//		
+//		foreach (AIPlayer member in members)
+//		{
+//			currDistance = Vector2.Distance(member.transform.position, target.transform.position);
+//			
+//			if (currDistance < closestDistance)
+//			{
+//				closestDistance = currDistance;
+//				closestMember = member;
+//			}
+//		}
+//		
+//		return closestMember;
+//	}
 	
 	/*********
 	 * STATES
@@ -108,7 +110,6 @@ public class Squad : MonoBehaviour
 			objective = lastSeenPosition;
 			WaitInCoverTimer = Time.time;
 			currentState = GoingToLastSeenPosition;
-			return;
 		}
 	}
 	public bool IsAttacking() { return currentState == Attacking; }
@@ -122,13 +123,13 @@ public class Squad : MonoBehaviour
 			currentState = Attacking;
 			return;
 		}
-		//check to see if player is there
-		if(this.IsAtObjective() && Time.time - WaitInCoverTimer >= waitTime)
+		
+		// Check to see if player is there
+		if (this.IsAtObjective() && Time.time - WaitInCoverTimer >= WAIT_TIME)
 		{
 			currentState = Patrolling;
 			return;
 		}
-
 	}
 	public bool IsGoingToLastSeenPosition() { return currentState == GoingToLastSeenPosition; }
 	
@@ -139,6 +140,7 @@ public class Squad : MonoBehaviour
 	public void OnEnemyDetected(AbstractPlayer enemy)
 	{
 		lastSeenPosition = (Vector2) enemy.transform.position;
+		
 		if (!enemiesInSight.ContainsKey(enemy))
 		{
 			enemiesInSight.Add(enemy,1);
