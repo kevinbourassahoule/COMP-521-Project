@@ -54,9 +54,10 @@ public class Environment : MonoBehaviour
 		*/
 		GameObject Map = (GameObject)GameObject.Instantiate (Map1Prefab, Vector2.zero, Quaternion.identity);
 		Map.transform.parent = this.transform;
-		Height = transform.FindChild("Map(Clone)/TopLeft").position.y - transform.FindChild("Map(Clone)/BotLeft").position.y; 
-		Width  = transform.FindChild("Map(Clone)/BotRight").position.x - transform.FindChild("Map(Clone)/BotLeft").position.x;
-		Walls  = transform.FindChild("Map(Clone)/Walls").GetComponentsInChildren<Wall>();
+		Map.name = "Map";
+		Height = transform.FindChild("Map/TopLeft").position.y - transform.FindChild("Map/BotLeft").position.y; 
+		Width  = transform.FindChild("Map/BotRight").position.x - transform.FindChild("Map/BotLeft").position.x;
+		Walls  = transform.FindChild("Map/Walls").GetComponentsInChildren<Wall>();
 		
 		// Initialize mesh properties
 		visibilityPolygonMeshFilter = transform.FindChild ("VisibilityPolygon").GetComponent<MeshFilter> ();
