@@ -1,17 +1,15 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\AIPlayer.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Visibility\VisibilityComputer.cs">
     <Files>
-      <File FileName="Assets\Scripts\HumanPlayer.cs" Line="14" Column="5" />
-      <File FileName="Assets\Scripts\Squad.cs" Line="125" Column="4" />
-      <File FileName="Assets\Scripts\AbstractPlayer.cs" Line="42" Column="26" />
+      <File FileName="Assets\Scripts\Visibility\VisibilityComputer.cs" Line="144" Column="6" />
+      <File FileName="Assets\Scripts\HumanPlayer.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Squad.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\AbstractPlayer.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Bullet.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\AIPlayer.cs" Line="54" Column="29" />
-      <File FileName="..\..\..\521A2\Assets\cannonBall.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Environment.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\Wall.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Visibility\VisibilityComputer.cs" Line="306" Column="4" />
-      <File FileName="c:\Users\josh\Documents\GitHub\COMP-521-Project\Unity Workspace\Assets\Scripts\Deprecated Visibility\VisibilityPolygon2.cs" Line="119" Column="59" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
