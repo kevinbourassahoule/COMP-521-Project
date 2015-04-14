@@ -25,7 +25,10 @@ public class AIPlayer : AbstractPlayer
 	// Update is called once per frame
 	void Update () 
 	{
-		ApplyForces();
+		if(!Target.IsDead())
+		{
+			ApplyForces();
+		}
 		//keep track of if we saw the player last frame
 		bool previouslyInSight = targetInSight;
 		//do we see him now?
