@@ -42,7 +42,8 @@ public class VisibilityComputer
 		}
 		
 		this.Origin = origin;
-		this.Radius = radius;            
+		this.Radius = radius;       
+
 		LoadBoundaries();
 	}
 	
@@ -51,15 +52,15 @@ public class VisibilityComputer
 	 */
 	private void AddSegment(Vector2 p1, Vector2 p2)
 	{
-		Segment segment    = new Segment();
+		Segment  segment   = new Segment();
 		EndPoint endPoint1 = new EndPoint();
 		EndPoint endPoint2 = new EndPoint();
 		
 		// Initialize endpoints
 		endPoint1.Position = p1;
-		endPoint1.Segment = segment;
+		endPoint1.Segment  = segment;
 		endPoint2.Position = p2;
-		endPoint2.Segment = segment;
+		endPoint2.Segment  = segment;
 		
 		// Initialize segment
 		segment.P1 = endPoint1;
@@ -72,7 +73,8 @@ public class VisibilityComputer
 	}
 	
 	/*
-	 * Loads the boundaries of the visibility polygon (maximum visibility)
+	 * Loads the boundaries of the visibility polygon.
+	 * This is a square of size Radius around the viewer.
 	 */  
 	private void LoadBoundaries()
 	{
@@ -98,7 +100,7 @@ public class VisibilityComputer
 	 */
 	private void UpdateSegments()
 	{            
-		foreach(Segment segment in segments)
+		foreach (Segment segment in segments)
 		{
 			// Update angles
 			segment.P1.Angle = (float)Math.Atan2(segment.P1.Position.y - Origin.y,
@@ -108,8 +110,10 @@ public class VisibilityComputer
 			
 			// Map angle between -Pi and Pi
 			float dAngle = segment.P2.Angle - segment.P1.Angle;
-			if (dAngle <= -Mathf.PI) { dAngle += 2 * Mathf.PI; }
-			if (dAngle > Mathf.PI) { dAngle -= 2 * Mathf.PI; }
+			if (dAngle <= -Mathf.PI) 
+				dAngle += 2 * Mathf.PI;
+			if (dAngle > Mathf.PI)
+				dAngle -= 2 * Mathf.PI;
 			
 			// Update which endpoint is the segment's start
 			segment.P1.Begin = (dAngle > 0.0f);
@@ -123,55 +127,55 @@ public class VisibilityComputer
 	public void Compute()
 	{
 		List<Vector2> meshVertices = new List<Vector2>();
-		LinkedList<Segment> open = new LinkedList<Segment>();
+		LinkedList<Segment> polygonSegments = new LinkedList<Segment>();
 		
 		UpdateSegments();
 		endpoints.Sort(radialComparer);
 		
-		float currentAngle = 0;
+		float currAngle = 0;
 		
 		for (int pass = 0; pass < 2; pass++)
 		{
-			foreach(EndPoint p in endpoints)
+			foreach (EndPoint endPoint in endpoints)
 			{
-				Segment currentOld = (open.Count == 0 ? null : open.First.Value);
+				Segment oldSegment = (polygonSegments.Count == 0 ? null : polygonSegments.First.Value);
 				
-				if (p.Begin)                    
+				if (endPoint.Begin)                    
 				{
 					// Insert into the right place in the list
-					var node = open.First;
-					while (node != null && p.Segment.InFrontOf(node.Value, Origin))
+					Segment polygonSegment = polygonSegments.First;
+					while (polygonSegment != null && endPoint.Segment.InFrontOf(polygonSegment.Value, Origin))
 					{
-						node = node.Next;
+						polygonSegment = polygonSegment.Next;
 					}
 					
-					if (node == null)
+					if (polygonSegment == null)
 					{
-						open.AddLast(p.Segment);
+						polygonSegments.AddLast(endPoint.Segment);
 					}
 					else
 					{
-						open.AddBefore(node, p.Segment);
+						polygonSegments.AddBefore(polygonSegment, endPoint.Segment);
 					}
 				}
 				else
 				{
-					open.Remove(p.Segment);
+					polygonSegments.Remove(endPoint.Segment);
 				}
 				
-				Segment currentNew = null;
-				if(open.Count != 0)
+				Segment newSegment = null;
+				if (polygonSegments.Count != 0)
 				{                
-					currentNew = open.First.Value;
+					newSegment = polygonSegments.First.Value;
 				}
 				
-				if(currentOld != currentNew)
+				if(oldSegment != newSegment)
 				{
 					if(pass == 1)
 					{
-						AddTriangle(meshVertices, currentAngle, p.Angle, currentOld);
+						AddTriangle(meshVertices, currAngle, endPoint.Angle, oldSegment);
 					}
-					currentAngle = p.Angle;
+					currAngle = endPoint.Angle;
 				}
 			}
 		}
@@ -197,9 +201,9 @@ public class VisibilityComputer
 			meshTriangles.Add(i + 2);
 			meshTriangles.Add(i + 1);
 
-			Debug.DrawLine(meshVertices[0], meshVertices[i+1]);
-			Debug.DrawLine(meshVertices[0], meshVertices[i+2]);
-			Debug.DrawLine(meshVertices[i+1], meshVertices[i+2]);
+			Debug.DrawLine(meshVertices[0], meshVertices[i + 1]);
+			Debug.DrawLine(meshVertices[0], meshVertices[i + 2]);
+			Debug.DrawLine(meshVertices[i + 1], meshVertices[i + 2]);
 		}
 		meshFilter.mesh.triangles = meshTriangles.ToArray();
 		

@@ -57,7 +57,8 @@ public class Squad : MonoBehaviour
 		transform.position = Vector2.MoveTowards(transform.position, objective, Environment.Instance.PlayerMaxSpeed);
 	}
 	
-	// TODO Could be cool if multiple enemies
+	// TODO Currently unused.  This could be useful if the AI are playing against multiple enemies,
+	// but this is currently not our game's main concern.
 //	private AIPlayer GetMemberClosestToTarget(AbstractPlayer target)
 //	{
 //		float closestDistance = Mathf.Infinity;
@@ -104,7 +105,7 @@ public class Squad : MonoBehaviour
 	
 	private void Attacking()
 	{
-		//if we do not see the player go to last scene position
+		// If we do not see the player, go to last seen position
 		if(enemiesInSight.Count == 0)
 		{
 			objective = lastSeenPosition;
@@ -143,7 +144,7 @@ public class Squad : MonoBehaviour
 		
 		if (!enemiesInSight.ContainsKey(enemy))
 		{
-			enemiesInSight.Add(enemy,1);
+			enemiesInSight.Add(enemy, 1);
 		}
 		else {
 			enemiesInSight[enemy]++;

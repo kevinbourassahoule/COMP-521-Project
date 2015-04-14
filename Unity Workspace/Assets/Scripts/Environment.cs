@@ -37,7 +37,7 @@ public class Environment : MonoBehaviour
 
 	// Mesh vertices
 	private MeshFilter visibilityPolygonMeshFilter;
-	public Vector3[] MeshVertices { get; set; }
+	public Vector3[]   MeshVertices { get; set; }
 	
 	// Singleton instance of environment
 	public static Environment Instance { get; private set; }

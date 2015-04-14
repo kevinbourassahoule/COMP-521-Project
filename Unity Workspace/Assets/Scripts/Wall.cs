@@ -1,27 +1,35 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class Wall : MonoBehaviour {
-
+public class Wall : MonoBehaviour 
+{
 	public Vector2 botLeft;
 	public Vector2 botRight;
 	public Vector2 topLeft;
 	public Vector2 topRight;
 	public Vector2 coverLeftPoint;
 	public Vector2 coverRightPoint;
-	// Use this for initialization
-	void Start () {
-		Quaternion angle = Quaternion.Euler (transform.eulerAngles);
-		Vector3 playerExtents = this.GetComponent<BoxCollider2D> ().size * 0.5f ;
-		//find bounds and covers
-		botLeft              = new Vector2 ((-playerExtents.x* transform.localScale.x) + transform.position.x, -(playerExtents.y* transform.localScale.y) + transform.position.y);
-		botRight             = new Vector2 ((playerExtents.x* transform.localScale.x) + transform.position.x, -(playerExtents.y* transform.localScale.y)+ transform.position.y);
-		topLeft              = new Vector2 ((-playerExtents.x* transform.localScale.x) + transform.position.x, (playerExtents.y* transform.localScale.y) + transform.position.y);
-		topRight             = new Vector2 ((playerExtents.x* transform.localScale.x) + transform.position.x, (playerExtents.y* transform.localScale.y) + transform.position.y);
-		coverLeftPoint       = new Vector2 ((-playerExtents.x * transform.localScale.x) + transform.position.x, transform.position.y);
-		coverRightPoint      = new Vector2 ((playerExtents.x * transform.localScale.x) + transform.position.x, transform.position.y);
 
-		//roate points
+	// Use this for initialization
+	void Start () 
+	{
+		Quaternion angle = Quaternion.Euler (transform.eulerAngles);
+		Vector3 playerExtents = this.GetComponent<BoxCollider2D>().size * 0.5f ;
+		// Find bounds and covers
+		botLeft              = new Vector2 ((-playerExtents.x * transform.localScale.x) + 
+		                                    transform.position.x, -(playerExtents.y * transform.localScale.y) + transform.position.y);
+		botRight             = new Vector2 ((playerExtents.x  * transform.localScale.x) + 
+		                                    transform.position.x, -(playerExtents.y * transform.localScale.y) + transform.position.y);
+		topLeft              = new Vector2 ((-playerExtents.x * transform.localScale.x) + 
+		                                    transform.position.x, (playerExtents.y  * transform.localScale.y) + transform.position.y);
+		topRight             = new Vector2 ((playerExtents.x  * transform.localScale.x) + 
+		                                    transform.position.x, (playerExtents.y  * transform.localScale.y) + transform.position.y);
+		coverLeftPoint       = new Vector2 ((-playerExtents.x * transform.localScale.x) + 
+		                                    transform.position.x, transform.position.y);
+		coverRightPoint      = new Vector2 ((playerExtents.x  * transform.localScale.x) + 
+		                                    transform.position.x, transform.position.y);
+
+		// Rotate points
 		botLeft              = RotatePoint2d (botLeft, angle);
 		botRight             = RotatePoint2d (botRight, angle);
 		topLeft              = RotatePoint2d (topLeft, angle);
@@ -29,7 +37,7 @@ public class Wall : MonoBehaviour {
 		coverLeftPoint       = RotatePoint2d (coverLeftPoint, angle);
 		coverRightPoint      = RotatePoint2d (coverRightPoint, angle);
 
-		//instantiate covers
+		// Instantiate covers
 		GameObject coverLeft = new GameObject ();
 		coverLeft.transform.position   = coverLeftPoint;
 		coverLeft.transform.parent     = transform;
@@ -41,7 +49,6 @@ public class Wall : MonoBehaviour {
 		coverRight.transform.parent    = transform;
 		coverRight.transform.name      = "CoverPointRight";
 		coverRight.transform.tag       = "CoverPoint";
-		
 	}
 	
 	private Vector2 RotatePoint2d(Vector2 oldPoint, Quaternion angle)   
