@@ -217,7 +217,7 @@ public class AIPlayer : AbstractPlayer
 			}
 		}
 		
-		if (!Target.IsDead())
+		if (Target.gameObject != null && !Target.IsDead())
 		{
 			if (squad.IsAttacking() && targetInSight)
 			{
