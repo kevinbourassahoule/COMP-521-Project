@@ -218,8 +218,10 @@ public class AIPlayer : AbstractPlayer
 		}
 
 		// Update position
-		transform.position = Vector3.MoveTowards(transform.position, transform.position + (Vector3) movementForces, Environment.Instance.PlayerMaxSpeed);
-		
+		if(!float.IsNaN(movementForces.x) && !float.IsNaN(movementForces.y))
+		{
+			transform.position = Vector3.MoveTowards(transform.position, transform.position + (Vector3) movementForces, Environment.Instance.PlayerMaxSpeed);
+		}
 		// Update rotation
 		Vector3 lookAtVector = (transform.position + (Vector3) lookAtForces) - transform.position;
 		if (lookAtVector != Vector3.zero)
