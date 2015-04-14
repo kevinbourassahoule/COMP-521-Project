@@ -183,24 +183,9 @@ public class AIPlayer : AbstractPlayer
 			Vector2 coverForce  = nearestCover - (Vector2)transform.position;
 			//Debug.Log(coverForce);
 			movementForces +=  coverForce;
-			lookAtForces   -=  coverForce.normalized/Vector2.Distance(nearestCover,(Vector2)transform.position);
+			lookAtForces   -=  coverForce;//.normalized/Vector2.Distance(nearestCover,(Vector2)transform.position);
 		}
 
-
-		/*// Get nearest cover point from nearest wall and generate a force from its position
-		if (Vector2.Distance(nearestWall.coverLeftPoint, transform.position) < 
-		    Vector2.Distance(nearestWall.coverRightPoint, transform.position)) 
-		{
-			nearbyCoverForce = nearestWall.coverLeftPoint - (Vector2) transform.position;
-		}
-		else {
-			nearbyCoverForce = nearestWall.coverRightPoint - (Vector2) transform.position;
-		}
-		if (squad.IsAttacking())
-		{
-			movementForces += nearbyCoverForce;
-			lookAtForces   += nearbyCoverForce;
-		}*/
 		
 		// Accumulate forces from walls
 		if (nearbyWallCount > 0) 
