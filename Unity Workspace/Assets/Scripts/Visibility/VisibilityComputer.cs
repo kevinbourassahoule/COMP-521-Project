@@ -143,7 +143,7 @@ public class VisibilityComputer
 				if (endPoint.Begin)                    
 				{
 					// Insert into the right place in the list
-					Segment polygonSegment = polygonSegments.First;
+					var polygonSegment = polygonSegments.First;
 					while (polygonSegment != null && endPoint.Segment.InFrontOf(polygonSegment.Value, Origin))
 					{
 						polygonSegment = polygonSegment.Next;
