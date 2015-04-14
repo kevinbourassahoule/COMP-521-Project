@@ -175,16 +175,14 @@ public class AIPlayer : AbstractPlayer
 			}
 		}
 		//need to consider cover points if attacking
-		if(squad.IsAttacking())
+		if(nearestCover != Vector2.zero)
 		{
-			if(nearestCover != Vector2.zero)
-			{
-				Vector2 coverForce  = (nearestCover - (Vector2)transform.position).normalized / 
-											Vector2.Distance (nearestCover,(Vector2) transform.position);
-				movementForces += coverForce;
-				lookAtForces   -=  coverForce;
-			}
+			Vector2 coverForce  = nearestCover - (Vector2)transform.position;
+			//Debug.Log(coverForce);
+			movementForces +=  coverForce;
+			lookAtForces   -=  coverForce;
 		}
+
 
 		// Get nearest cover point from nearest wall and generate a force from its position
 		if (Vector2.Distance(nearestWall.coverLeftPoint, transform.position) < 
